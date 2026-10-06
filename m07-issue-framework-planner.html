@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contemporary Issue Framework Planner — HPA 5312 Module 7</title>
+<style>
+  :root {
+    --green: #154734; --gold: #FFB81C;
+    --ink: #12352a; --muted: #5f7068;
+    --soft-green: #e7f1ed; --soft-gold: #fff4d8; --line: #cfddd7;
+    --danger: #b42318; --danger-soft: #ffe5e2;
+    --success: #1f7a46; --success-soft: #e2f5e8;
+    --shadow: 0 22px 60px rgba(21, 71, 52, 0.16);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Proxima Nova", "Helvetica Neue", Arial, sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(circle at top left, rgba(255,184,28,0.28), transparent 30rem),
+      linear-gradient(135deg, #f7fbf8 0%, #eef7f3 100%);
+    min-height: 100vh;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* ---- Layout ------------------------------------------------------------
+     Phone-first single column. At the 1366x1366 LMS frame the container
+     widens and vertical rhythm tightens, so activities fit without the
+     retrofitted !important layer the previous course needed.              */
+  main {
+    width: min(100%, 46rem);
+    margin: 0 auto;
+    padding: clamp(1rem, 3vw, 1.75rem) clamp(0.85rem, 3vw, 1.5rem) 1.25rem;
+  }
+  @media (min-width: 1100px) and (min-height: 900px) {
+    main { width: min(100%, 1180px); padding-top: 1rem; padding-bottom: 1rem; }
+    h1 { font-size: 1.7rem !important; margin-bottom: 0.25rem !important; }
+    .card { padding: 0.85rem 1.1rem; margin-bottom: 0.7rem; }
+    .lede { margin-bottom: 0.2rem; }
+    /* Opt-in helpers: an activity adds these to its own containers. */
+    .fit-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; align-items: start; }
+    .fit-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; align-items: start; }
+    .fit-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.55rem; align-items: start; }
+    .fit-2 > *, .fit-3 > *, .fit-4 > * { margin-bottom: 0 !important; }
+    .fit-span { grid-column: 1 / -1; }
+  }
+
+  /* Course banner. Decorative — alt="" and role="presentation" keep it out of
+     the accessibility tree, since it carries no information a student needs.
+     It scales with the container at its natural 20:3 ratio, so it costs about
+     177px of height in the wide frame and only ~56px on a phone. */
+  .course-banner {
+    display: block; width: 100%; height: auto;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    margin-bottom: clamp(0.7rem, 2vw, 1rem);
+  }
+  @media (min-width: 1100px) and (min-height: 900px) {
+    .course-banner { margin-bottom: 0.55rem; }
+  }
+  @media print { .course-banner { display: none; } }
+
+  .card {
+    background: rgba(255,255,255,0.94);
+    border: 2px solid rgba(21,71,52,0.1);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    padding: clamp(1rem, 3vw, 1.5rem);
+    margin-bottom: clamp(0.8rem, 2.2vw, 1.15rem);
+  }
+  .eyebrow {
+    display: inline-block; background: var(--soft-gold); color: var(--green);
+    font-size: 0.78rem; font-weight: 800; letter-spacing: 0.08em;
+    text-transform: uppercase; border-radius: 999px;
+    padding: 0.3rem 0.85rem; margin: 0 0 0.65rem;
+  }
+  h1 { color: var(--green); font-size: clamp(1.35rem, 4.5vw, 1.85rem); line-height: 1.2; margin: 0 0 0.5rem; }
+  h2 { color: var(--green); font-size: 1.1rem; margin: 0 0 0.5rem; }
+  h3 { color: var(--green); font-size: 0.98rem; margin: 0 0 0.35rem; }
+  p { line-height: 1.55; margin: 0 0 0.6rem; }
+  .lede { color: var(--muted); font-weight: 600; }
+  .hint { color: var(--muted); font-size: 0.88rem; }
+
+  /* ---- Controls ---------------------------------------------------------- */
+  .btn {
+    min-height: 2.9rem; padding: 0 1.1rem;
+    border: 2px solid var(--green); border-radius: 8px;
+    background: #fff; color: var(--green);
+    font: inherit; font-weight: 800; font-size: 0.95rem; cursor: pointer;
+    transition: background 150ms ease, color 150ms ease, opacity 150ms ease;
+  }
+  .btn:not(:disabled):hover, .btn:not(:disabled):focus-visible { background: var(--green); color: #fff; outline: none; }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn.primary { background: var(--gold); border-color: var(--gold); }
+  .btn.primary:not(:disabled):hover, .btn.primary:not(:disabled):focus-visible { background: var(--green); border-color: var(--green); color: #fff; }
+  .controls { display: flex; flex-wrap: wrap; gap: 0.55rem; margin-top: 0.7rem; }
+  .controls .btn { flex: 1 1 10rem; }
+
+  select, input[type="text"], textarea {
+    font: inherit; color: var(--ink); background: #fff;
+    border: 2px solid var(--line); border-radius: 6px;
+    padding: 0.45rem 0.55rem; min-height: 2.6rem;
+  }
+  select:focus-visible, input:focus-visible, textarea:focus-visible,
+  button:focus-visible, [tabindex]:focus-visible, a:focus-visible {
+    outline: 3px solid var(--gold); outline-offset: 2px;
+  }
+
+  /* State signalling always pairs colour with a mark or text (WCAG 1.4.1). */
+  .is-correct { border-color: var(--success) !important; background: var(--success-soft); }
+  .is-wrong   { border-color: var(--danger) !important;  background: var(--danger-soft); }
+  .mark { font-weight: 900; margin-right: 0.3rem; }
+  .mark.ok { color: var(--success); }
+  .mark.no { color: var(--danger); }
+
+  .progress-track { height: 0.55rem; background: var(--soft-green); border-radius: 999px; overflow: hidden; margin-top: 0.6rem; }
+  .progress-fill { height: 100%; width: 0%; background: var(--green); transition: width 220ms ease; }
+
+  /* ---- Completion summary (must report what actually happened) ---------- */
+  #summary[hidden] { display: none; }
+  #summary { border-color: var(--success); }
+  #summary h2 { display: flex; align-items: center; gap: 0.4rem; }
+  .summary-score { font-size: 1.05rem; font-weight: 900; color: var(--green); margin: 0 0 0.6rem; }
+  .summary-list { margin: 0 0 0.6rem; padding-left: 1.1rem; }
+  .summary-list li { margin-bottom: 0.25rem; line-height: 1.45; }
+  .summary-group { margin-bottom: 0.7rem; }
+  .summary-group h3 { margin-bottom: 0.2rem; }
+
+  /* ---- Two-part activities ---------------------------------------------
+     Some modules combine two activities into one sequential experience.
+     Only one part is on screen at a time, so a merged activity costs no more
+     height than the taller of its two halves.                             */
+  .part-steps { display: flex; gap: 0.5rem; margin-bottom: 0.8rem; flex-wrap: wrap; }
+  .part-step {
+    flex: 1 1 12rem; text-align: left;
+    border: 2px solid var(--line); border-radius: 8px;
+    background: rgba(255,255,255,0.9); color: var(--muted);
+    padding: 0.5rem 0.75rem; font: inherit; font-weight: 700; font-size: 0.9rem;
+    cursor: pointer; transition: border-color 150ms ease, color 150ms ease;
+  }
+  .part-step .part-n { display: block; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .part-step[aria-current="true"] { border-color: var(--green); color: var(--green); background: var(--soft-green); }
+  .part-step[data-state="done"] { border-color: var(--success); color: var(--success); }
+  .part-step[data-state="done"] .part-n::after { content: " ✓"; }
+  .part-step[data-state="locked"] { opacity: 0.55; cursor: not-allowed; }
+  .part-step[data-state="locked"] .part-n::after { content: " (locked)"; }
+  .part-panel[hidden] { display: none; }
+
+  .visually-hidden {
+    position: absolute !important; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+
+  /* ---- Finish bar -------------------------------------------------------- */
+  .finish-bar {
+    position: sticky; bottom: 0; z-index: 30;
+    padding: 0.7rem 1rem calc(0.7rem + env(safe-area-inset-bottom));
+    background: rgba(247, 251, 248, 0.92);
+    backdrop-filter: blur(6px); border-top: 2px solid var(--line);
+  }
+  .finish-button {
+    display: block; width: min(100%, 22rem); margin: 0 auto; min-height: 3rem;
+    border: 2px solid var(--gold); border-radius: 8px;
+    background: var(--gold); color: var(--green);
+    font: inherit; font-weight: 900; font-size: 1.05rem; cursor: pointer;
+    transition: background 160ms ease, color 160ms ease, opacity 160ms ease;
+  }
+  .finish-button:disabled { opacity: 0.45; cursor: not-allowed; }
+  .finish-button:not(:disabled):hover, .finish-button:not(:disabled):focus-visible {
+    background: var(--green); border-color: var(--green); color: #ffffff; outline: none;
+  }
+  @keyframes finish-pop { 0%{transform:scale(1)} 50%{transform:scale(1.04)} 100%{transform:scale(1)} }
+  .finish-button.enabled-pop { animation: finish-pop 600ms ease 2; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+  @media (max-width: 520px) {
+    .controls { flex-direction: column; }
+    .controls .btn { flex: none; width: 100%; }
+    select, input[type="text"] { width: 100%; }
+  }
+
+.field { margin-bottom: 0.85rem; }
+.field label { display: block; font-weight: 800; color: var(--green); margin-bottom: 0.2rem; }
+.field .hint { margin: 0 0 0.3rem; }
+.field textarea { width: 100%; min-height: 5.2rem; resize: vertical; line-height: 1.45; }
+.field input[type="text"] { width: 100%; }
+.count { font-size: 0.8rem; color: var(--muted); text-align: right; margin-top: 0.15rem; }
+.count.ok { color: var(--success); font-weight: 700; }
+.out { white-space: pre-wrap; border: 2px solid var(--line); border-radius: 6px; background: #fff; padding: 0.7rem; font-size: 0.92rem; line-height: 1.5; max-height: 28rem; overflow: auto; }
+#out-card[hidden] { display: none; }
+</style>
+</head>
+<body>
+<main>
+  <header class="card">
+    <span class="eyebrow">Module 7 · Contemporary Issue Presentations</span>
+    <h1>Contemporary Issue Framework Planner</h1>
+    <p class="lede">Plan your evidence-based framework before you build your presentation. Complete each section, then generate a summary you can copy or download for your slides.</p>
+  </header>
+
+<form id="planner" class="fit-2" novalidate>
+  <section class="card fit-span" aria-labelledby="sec1">
+    <h2 id="sec1">1. The issue</h2>
+    <div class="field"><label for="f-issue">Issue title</label><p class="hint" id="h-issue">Name the issue in a few words (for example, rural hospital closures or prescription drug prices).</p><input type="text" id="f-issue" data-min="5" aria-describedby="h-issue"></div>
+    <div class="field"><label for="f-problem">Problem statement</label><p class="hint" id="h-problem">What is happening, who is affected, and why it matters now. Use at least one data point.</p><textarea id="f-problem" data-min="80" aria-describedby="h-problem"></textarea><div class="count"></div></div>
+  </section>
+  <section class="card" aria-labelledby="sec2">
+    <h2 id="sec2">2. Analysis</h2>
+    <div class="field"><label for="f-causes">Root causes</label><p class="hint" id="h-causes">Link the issue to course concepts: financing and payment, determinants of health, technology, policy history, or system structure.</p><textarea id="f-causes" data-min="80" aria-describedby="h-causes"></textarea><div class="count"></div></div>
+    <div class="field"><label for="f-stake">Stakeholders</label><p class="hint" id="h-stake">Who gains, who loses, and who decides? Consider patients, providers, payers, employers, and government.</p><textarea id="f-stake" data-min="60" aria-describedby="h-stake"></textarea><div class="count"></div></div>
+  </section>
+  <section class="card" aria-labelledby="sec3">
+    <h2 id="sec3">3. Your framework</h2>
+    <div class="field"><label for="f-frame">Proposed framework or solution</label><p class="hint" id="h-frame">Describe the core components of your approach.</p><textarea id="f-frame" data-min="80" aria-describedby="h-frame"></textarea><div class="count"></div></div>
+    <div class="field"><label for="f-evidence">Evidence base</label><p class="hint" id="h-evidence">List at least two sources (peer-reviewed research, government data, or policy analyses) and what each shows.</p><textarea id="f-evidence" data-min="80" aria-describedby="h-evidence"></textarea><div class="count"></div></div>
+  </section>
+  <section class="card" aria-labelledby="sec4">
+    <h2 id="sec4">4. Trade-offs and implementation</h2>
+    <div class="field"><label for="f-tri">Effect on access, cost, and quality</label><p class="hint" id="h-tri">Use the health policy trilemma: what improves, and what might get worse?</p><textarea id="f-tri" data-min="60" aria-describedby="h-tri"></textarea><div class="count"></div></div>
+    <div class="field"><label for="f-barriers">Barriers and how you'll address them</label><p class="hint" id="h-barriers">Political, financial, legal, or operational obstacles.</p><textarea id="f-barriers" data-min="60" aria-describedby="h-barriers"></textarea><div class="count"></div></div>
+  </section>
+  <section class="card" aria-labelledby="sec5">
+    <h2 id="sec5">5. Measuring success</h2>
+    <div class="field"><label for="f-measure">Metrics</label><p class="hint" id="h-measure">Which two or three measures would show your framework is working, and over what time frame?</p><textarea id="f-measure" data-min="40" aria-describedby="h-measure"></textarea><div class="count"></div></div>
+    <div class="field"><label for="f-peer">Feedback you want from peers</label><p class="hint" id="h-peer">What question will you ask classmates to evaluate when they review your presentation?</p><textarea id="f-peer" data-min="20" aria-describedby="h-peer"></textarea><div class="count"></div></div>
+  </section>
+</form>
+<section class="card">
+  <div class="progress-track" aria-hidden="true"><div class="progress-fill" id="prog"></div></div>
+  <p class="hint" id="status">0 of 10 sections complete.</p>
+  <div class="controls"><button type="button" class="btn primary" id="gen" disabled>Generate my framework summary</button></div>
+</section>
+<section class="card" id="out-card" hidden aria-labelledby="out-h">
+  <h2 id="out-h" tabindex="-1">Your framework summary</h2>
+  <div class="out" id="out" tabindex="0" role="region" aria-label="Framework summary text"></div>
+  <div class="controls">
+    <button type="button" class="btn" id="copy">Copy summary</button>
+    <a class="btn" id="dl" href="#" download="issue-framework-plan.txt" style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none">Download as text file</a>
+  </div>
+  <p class="hint" id="copy-msg" aria-live="polite"></p>
+</section>
+
+  <section id="summary" class="card" hidden aria-labelledby="summary-heading">
+    <h2 id="summary-heading">How you did</h2>
+    <p class="summary-score" id="summary-score"></p>
+    <div id="summary-detail"></div>
+    <p class="hint" id="summary-note"></p>
+  </section>
+</main>
+
+<div id="live-region" class="visually-hidden" role="status" aria-live="polite"></div>
+
+<footer class="finish-bar">
+  <button type="button" id="finish-button" class="finish-button" disabled>Finish</button>
+</footer>
+
+<script>
+/* ---- SCORM 1.2 wrapper. Degrades silently to standalone preview. -------- */
+const SCORM = (() => {
+  let api = null, initialized = false, finished = false;
+  function findApi(win) {
+    let current = win, attempts = 0;
+    try {
+      while (current && !current.API && current.parent && current.parent !== current && attempts < 500) {
+        attempts += 1; current = current.parent;
+      }
+      if (current && current.API) return current.API;
+      if (win.opener && !win.opener.closed) return findApi(win.opener);
+    } catch (e) { return null; }
+    return null;
+  }
+  function call(method, ...args) {
+    if (!api || typeof api[method] !== "function") return "false";
+    try { return api[method](...args); } catch (e) { return "false"; }
+  }
+  function init() {
+    if (initialized) return true;
+    api = findApi(window);
+    if (!api) return false;
+    initialized = call("LMSInitialize", "") === "true";
+    if (initialized) {
+      const prior = call("LMSGetValue", "cmi.core.lesson_status");
+      if (prior !== "completed" && prior !== "passed") {
+        call("LMSSetValue", "cmi.core.lesson_status", "incomplete");
+      }
+      call("LMSSetValue", "cmi.core.score.min", "0");
+      call("LMSSetValue", "cmi.core.score.max", "100");
+      call("LMSCommit", "");
+    }
+    return initialized;
+  }
+  function setScore(raw) {
+    if (!initialized) return;
+    call("LMSSetValue", "cmi.core.score.raw", String(raw));
+    call("LMSCommit", "");
+  }
+  function finishActivity(score) {
+    if (finished) return;
+    if (initialized) {
+      call("LMSSetValue", "cmi.core.lesson_status", "completed");
+      if (score !== null && score !== undefined) call("LMSSetValue", "cmi.core.score.raw", String(score));
+      call("LMSCommit", "");
+      call("LMSFinish", "");
+    }
+    finished = true;
+  }
+  function unloadSafety() {
+    if (finished || !initialized) return;
+    call("LMSCommit", ""); call("LMSFinish", ""); finished = true;
+  }
+  window.addEventListener("pagehide", unloadSafety);
+  window.addEventListener("beforeunload", unloadSafety);
+  return { init, setScore, finishActivity };
+})();
+SCORM.init();
+
+/* ---- Activity API -------------------------------------------------------
+   The only surface an activity script needs. Handles the Finish button,
+   the live region, the score, and the completion summary, so no activity
+   re-implements them (or gets them subtly wrong).                        */
+const Activity = (() => {
+  const finishBtn = document.getElementById("finish-button");
+  const live = document.getElementById("live-region");
+  const summaryEl = document.getElementById("summary");
+  const scoreEl = document.getElementById("summary-score");
+  const detailEl = document.getElementById("summary-detail");
+  const noteEl = document.getElementById("summary-note");
+  let firstScore = null;   // frozen on first completion so review passes can't inflate it
+  let ready = false;
+
+  function announce(msg) { live.textContent = ""; setTimeout(() => { live.textContent = msg; }, 40); }
+
+  function setReady(on, msg) {
+    ready = !!on;
+    finishBtn.disabled = !ready;
+    if (ready) {
+      finishBtn.classList.add("enabled-pop");
+      setTimeout(() => finishBtn.classList.remove("enabled-pop"), 1400);
+      if (msg) announce(msg);
+    }
+  }
+
+  /* Report the truth: right and missed are arrays of plain strings.
+     Passing neither still renders an honest "you finished" line.        */
+  function summarize({ score = null, right = [], missed = [], note = "" } = {}) {
+    if (firstScore === null && score !== null) firstScore = score;
+    const shown = firstScore === null ? null : firstScore;
+    if (shown !== null) {
+      const total = right.length + missed.length;
+      scoreEl.textContent = total
+        ? `${right.length} of ${total} correct on your first attempt — ${shown}%`
+        : `First-attempt score: ${shown}%`;
+    } else {
+      scoreEl.textContent = "Activity complete.";
+    }
+    detailEl.innerHTML = "";
+    const group = (title, items, cls) => {
+      if (!items.length) return;
+      const wrap = document.createElement("div");
+      wrap.className = "summary-group";
+      const h = document.createElement("h3");
+      h.innerHTML = `<span class="mark ${cls === "ok" ? "ok" : "no"}">${cls === "ok" ? "✓" : "✗"}</span>${title}`;
+      const ul = document.createElement("ul");
+      ul.className = "summary-list";
+      items.forEach(t => { const li = document.createElement("li"); li.textContent = t; ul.appendChild(li); });
+      wrap.appendChild(h); wrap.appendChild(ul); detailEl.appendChild(wrap);
+    };
+    group(`You got these right (${right.length})`, right, "ok");
+    group(`You missed these (${missed.length})`, missed, "no");
+    noteEl.textContent = note || "";
+    summaryEl.hidden = false;
+    summaryEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    if (shown !== null) SCORM.setScore(shown);
+  }
+
+  finishBtn.addEventListener("click", () => {
+    if (!ready) return;
+    SCORM.finishActivity(firstScore);
+    finishBtn.disabled = true;
+    finishBtn.textContent = "Finished ✓";
+    announce("Activity finished and reported as complete.");
+  });
+
+  return { setReady, announce, summarize, get score() { return firstScore; } };
+})();
+
+/* ---- Multi-part coordinator --------------------------------------------
+   For modules that merge two activities into one. Each part reports here
+   instead of calling Activity.setReady / Activity.summarize itself, and only
+   the last part to finish unlocks Finish. Without this, part one would enable
+   the Finish button and a student could submit half an activity.         */
+const Parts = (() => {
+  let expected = 0;
+  const results = new Map();
+  const listeners = [];
+
+  function expect(n) { expected = n; }
+  function isDone(i) { return results.has(i); }
+  function onDone(fn) { listeners.push(fn); }
+
+  function done(index, { score = null, right = [], missed = [], label = "" } = {}) {
+    if (results.has(index)) return;                 // first result stands
+    results.set(index, { score, right, missed, label });
+    listeners.forEach(fn => { try { fn(index); } catch (e) {} });
+    if (results.size < expected) {
+      Activity.announce(`Part ${index} complete. Part ${index + 1} is now available.`);
+      return;
+    }
+    // Merge both parts' results, keeping each item attributed to its part so
+    // the summary says which half a student actually struggled with.
+    // NB: these locals must NOT be named `right` / `missed` — those are already
+    // bound by this function's destructured parameter, and redeclaring them with
+    // const is a SyntaxError that kills the whole inline script silently.
+    const allRight = [], allMissed = [];
+    let weighted = 0, items = 0;
+    [...results.entries()].sort((a, b) => a[0] - b[0]).forEach(([i, r]) => {
+      const tag = r.label ? `${r.label}: ` : `Part ${i}: `;
+      r.right.forEach(t => allRight.push(tag + t));
+      r.missed.forEach(t => allMissed.push(tag + t));
+      const n = r.right.length + r.missed.length;
+      if (r.score !== null && n) { weighted += r.score * n; items += n; }
+      else if (r.score !== null) { weighted += r.score; items += 1; }
+    });
+    const finalScore = items ? Math.round(weighted / items) : null;
+    Activity.setReady(true, "Both parts complete. You can finish the activity.");
+    Activity.summarize({
+      score: finalScore, right: allRight, missed: allMissed,
+      note: "This activity had two parts; the summary above covers both.",
+    });
+  }
+  return { expect, done, isDone, onDone };
+})();
+
+const FIELDS = [
+  ["f-issue", "Issue"], ["f-problem", "Problem statement"], ["f-causes", "Root causes"], ["f-stake", "Stakeholders"],
+  ["f-frame", "Proposed framework"], ["f-evidence", "Evidence base"], ["f-tri", "Effect on access, cost, and quality"],
+  ["f-barriers", "Barriers and responses"], ["f-measure", "Measures of success"], ["f-peer", "Peer feedback question"]
+];
+let generated = false;
+function isDone(el) { return el.value.trim().length >= Number(el.dataset.min || 1); }
+function update() {
+  let n = 0;
+  FIELDS.forEach(([id]) => {
+    const el = document.getElementById(id), ok = isDone(el);
+    if (ok) n++;
+    const cnt = el.parentElement.querySelector(".count");
+    if (cnt) { const len = el.value.trim().length, min = Number(el.dataset.min); cnt.textContent = ok ? "✓ Enough detail" : `${len} / ${min} characters minimum`; cnt.classList.toggle("ok", ok); }
+  });
+  document.getElementById("prog").style.width = (n / FIELDS.length * 100) + "%";
+  document.getElementById("status").textContent = `${n} of ${FIELDS.length} sections complete.`;
+  document.getElementById("gen").disabled = n < FIELDS.length;
+  if (generated && n < FIELDS.length) Activity.setReady(false);
+  return n;
+}
+document.getElementById("planner").addEventListener("input", update);
+function buildText() {
+  return "CONTEMPORARY ISSUE FRAMEWORK PLAN — HPA 5312\n\n" + FIELDS.map(([id, name]) => `${name.toUpperCase()}\n${document.getElementById(id).value.trim()}`).join("\n\n");
+}
+document.getElementById("gen").addEventListener("click", () => {
+  if (update() < FIELDS.length) return;
+  const text = buildText();
+  document.getElementById("out").textContent = text;
+  const dl = document.getElementById("dl");
+  dl.href = "data:text/plain;charset=utf-8," + encodeURIComponent(text);
+  document.getElementById("out-card").hidden = false;
+  document.getElementById("out-h").focus();
+  if (!generated) {
+    generated = true;
+    Activity.summarize({ score: null, right: [], missed: [], note: "Your plan is complete. Copy or download the summary above and use it to build your presentation. Your instructor evaluates the presentation itself, not this planner." });
+  }
+  Activity.setReady(true, "Framework summary generated. You can finish the activity.");
+});
+document.getElementById("copy").addEventListener("click", async () => {
+  const msg = document.getElementById("copy-msg");
+  try { await navigator.clipboard.writeText(buildText()); msg.textContent = "Copied to your clipboard."; }
+  catch (e) {
+    const r = document.createRange(); r.selectNodeContents(document.getElementById("out"));
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+    msg.textContent = "Copy isn't available here. The summary is selected; press Ctrl+C or Cmd+C to copy it.";
+  }
+});
+update();
+</script>
+</body>
+</html>

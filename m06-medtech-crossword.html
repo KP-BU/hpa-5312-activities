@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedTech Vocabulary — HPA 5312 Module 6</title>
+<style>
+  :root {
+    --green: #154734; --gold: #FFB81C;
+    --ink: #12352a; --muted: #5f7068;
+    --soft-green: #e7f1ed; --soft-gold: #fff4d8; --line: #cfddd7;
+    --danger: #b42318; --danger-soft: #ffe5e2;
+    --success: #1f7a46; --success-soft: #e2f5e8;
+    --shadow: 0 22px 60px rgba(21, 71, 52, 0.16);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Proxima Nova", "Helvetica Neue", Arial, sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(circle at top left, rgba(255,184,28,0.28), transparent 30rem),
+      linear-gradient(135deg, #f7fbf8 0%, #eef7f3 100%);
+    min-height: 100vh;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* ---- Layout ------------------------------------------------------------
+     Phone-first single column. At the 1366x1366 LMS frame the container
+     widens and vertical rhythm tightens, so activities fit without the
+     retrofitted !important layer the previous course needed.              */
+  main {
+    width: min(100%, 46rem);
+    margin: 0 auto;
+    padding: clamp(1rem, 3vw, 1.75rem) clamp(0.85rem, 3vw, 1.5rem) 1.25rem;
+  }
+  @media (min-width: 1100px) and (min-height: 900px) {
+    main { width: min(100%, 1180px); padding-top: 1rem; padding-bottom: 1rem; }
+    h1 { font-size: 1.7rem !important; margin-bottom: 0.25rem !important; }
+    .card { padding: 0.85rem 1.1rem; margin-bottom: 0.7rem; }
+    .lede { margin-bottom: 0.2rem; }
+    /* Opt-in helpers: an activity adds these to its own containers. */
+    .fit-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; align-items: start; }
+    .fit-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; align-items: start; }
+    .fit-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.55rem; align-items: start; }
+    .fit-2 > *, .fit-3 > *, .fit-4 > * { margin-bottom: 0 !important; }
+    .fit-span { grid-column: 1 / -1; }
+  }
+
+  /* Course banner. Decorative — alt="" and role="presentation" keep it out of
+     the accessibility tree, since it carries no information a student needs.
+     It scales with the container at its natural 20:3 ratio, so it costs about
+     177px of height in the wide frame and only ~56px on a phone. */
+  .course-banner {
+    display: block; width: 100%; height: auto;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    margin-bottom: clamp(0.7rem, 2vw, 1rem);
+  }
+  @media (min-width: 1100px) and (min-height: 900px) {
+    .course-banner { margin-bottom: 0.55rem; }
+  }
+  @media print { .course-banner { display: none; } }
+
+  .card {
+    background: rgba(255,255,255,0.94);
+    border: 2px solid rgba(21,71,52,0.1);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    padding: clamp(1rem, 3vw, 1.5rem);
+    margin-bottom: clamp(0.8rem, 2.2vw, 1.15rem);
+  }
+  .eyebrow {
+    display: inline-block; background: var(--soft-gold); color: var(--green);
+    font-size: 0.78rem; font-weight: 800; letter-spacing: 0.08em;
+    text-transform: uppercase; border-radius: 999px;
+    padding: 0.3rem 0.85rem; margin: 0 0 0.65rem;
+  }
+  h1 { color: var(--green); font-size: clamp(1.35rem, 4.5vw, 1.85rem); line-height: 1.2; margin: 0 0 0.5rem; }
+  h2 { color: var(--green); font-size: 1.1rem; margin: 0 0 0.5rem; }
+  h3 { color: var(--green); font-size: 0.98rem; margin: 0 0 0.35rem; }
+  p { line-height: 1.55; margin: 0 0 0.6rem; }
+  .lede { color: var(--muted); font-weight: 600; }
+  .hint { color: var(--muted); font-size: 0.88rem; }
+
+  /* ---- Controls ---------------------------------------------------------- */
+  .btn {
+    min-height: 2.9rem; padding: 0 1.1rem;
+    border: 2px solid var(--green); border-radius: 8px;
+    background: #fff; color: var(--green);
+    font: inherit; font-weight: 800; font-size: 0.95rem; cursor: pointer;
+    transition: background 150ms ease, color 150ms ease, opacity 150ms ease;
+  }
+  .btn:not(:disabled):hover, .btn:not(:disabled):focus-visible { background: var(--green); color: #fff; outline: none; }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn.primary { background: var(--gold); border-color: var(--gold); }
+  .btn.primary:not(:disabled):hover, .btn.primary:not(:disabled):focus-visible { background: var(--green); border-color: var(--green); color: #fff; }
+  .controls { display: flex; flex-wrap: wrap; gap: 0.55rem; margin-top: 0.7rem; }
+  .controls .btn { flex: 1 1 10rem; }
+
+  select, input[type="text"], textarea {
+    font: inherit; color: var(--ink); background: #fff;
+    border: 2px solid var(--line); border-radius: 6px;
+    padding: 0.45rem 0.55rem; min-height: 2.6rem;
+  }
+  select:focus-visible, input:focus-visible, textarea:focus-visible,
+  button:focus-visible, [tabindex]:focus-visible, a:focus-visible {
+    outline: 3px solid var(--gold); outline-offset: 2px;
+  }
+
+  /* State signalling always pairs colour with a mark or text (WCAG 1.4.1). */
+  .is-correct { border-color: var(--success) !important; background: var(--success-soft); }
+  .is-wrong   { border-color: var(--danger) !important;  background: var(--danger-soft); }
+  .mark { font-weight: 900; margin-right: 0.3rem; }
+  .mark.ok { color: var(--success); }
+  .mark.no { color: var(--danger); }
+
+  .progress-track { height: 0.55rem; background: var(--soft-green); border-radius: 999px; overflow: hidden; margin-top: 0.6rem; }
+  .progress-fill { height: 100%; width: 0%; background: var(--green); transition: width 220ms ease; }
+
+  /* ---- Completion summary (must report what actually happened) ---------- */
+  #summary[hidden] { display: none; }
+  #summary { border-color: var(--success); }
+  #summary h2 { display: flex; align-items: center; gap: 0.4rem; }
+  .summary-score { font-size: 1.05rem; font-weight: 900; color: var(--green); margin: 0 0 0.6rem; }
+  .summary-list { margin: 0 0 0.6rem; padding-left: 1.1rem; }
+  .summary-list li { margin-bottom: 0.25rem; line-height: 1.45; }
+  .summary-group { margin-bottom: 0.7rem; }
+  .summary-group h3 { margin-bottom: 0.2rem; }
+
+  /* ---- Two-part activities ---------------------------------------------
+     Some modules combine two activities into one sequential experience.
+     Only one part is on screen at a time, so a merged activity costs no more
+     height than the taller of its two halves.                             */
+  .part-steps { display: flex; gap: 0.5rem; margin-bottom: 0.8rem; flex-wrap: wrap; }
+  .part-step {
+    flex: 1 1 12rem; text-align: left;
+    border: 2px solid var(--line); border-radius: 8px;
+    background: rgba(255,255,255,0.9); color: var(--muted);
+    padding: 0.5rem 0.75rem; font: inherit; font-weight: 700; font-size: 0.9rem;
+    cursor: pointer; transition: border-color 150ms ease, color 150ms ease;
+  }
+  .part-step .part-n { display: block; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .part-step[aria-current="true"] { border-color: var(--green); color: var(--green); background: var(--soft-green); }
+  .part-step[data-state="done"] { border-color: var(--success); color: var(--success); }
+  .part-step[data-state="done"] .part-n::after { content: " ✓"; }
+  .part-step[data-state="locked"] { opacity: 0.55; cursor: not-allowed; }
+  .part-step[data-state="locked"] .part-n::after { content: " (locked)"; }
+  .part-panel[hidden] { display: none; }
+
+  .visually-hidden {
+    position: absolute !important; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+
+  /* ---- Finish bar -------------------------------------------------------- */
+  .finish-bar {
+    position: sticky; bottom: 0; z-index: 30;
+    padding: 0.7rem 1rem calc(0.7rem + env(safe-area-inset-bottom));
+    background: rgba(247, 251, 248, 0.92);
+    backdrop-filter: blur(6px); border-top: 2px solid var(--line);
+  }
+  .finish-button {
+    display: block; width: min(100%, 22rem); margin: 0 auto; min-height: 3rem;
+    border: 2px solid var(--gold); border-radius: 8px;
+    background: var(--gold); color: var(--green);
+    font: inherit; font-weight: 900; font-size: 1.05rem; cursor: pointer;
+    transition: background 160ms ease, color 160ms ease, opacity 160ms ease;
+  }
+  .finish-button:disabled { opacity: 0.45; cursor: not-allowed; }
+  .finish-button:not(:disabled):hover, .finish-button:not(:disabled):focus-visible {
+    background: var(--green); border-color: var(--green); color: #ffffff; outline: none;
+  }
+  @keyframes finish-pop { 0%{transform:scale(1)} 50%{transform:scale(1.04)} 100%{transform:scale(1)} }
+  .finish-button.enabled-pop { animation: finish-pop 600ms ease 2; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+  @media (max-width: 520px) {
+    .controls { flex-direction: column; }
+    .controls .btn { flex: none; width: 100%; }
+    select, input[type="text"] { width: 100%; }
+  }
+
+.xw-wrap { display: grid; gap: 0.8rem; }
+@media (min-width: 1100px) and (min-height: 900px) { .xw-wrap { grid-template-columns: auto minmax(0, 1fr); align-items: start; } }
+.xw-grid { display: grid; gap: 2px; background: transparent; width: max-content; max-width: 100%; }
+.xw-cell { position: relative; width: clamp(1.45rem, 6.2vw, 1.9rem); height: clamp(1.45rem, 6.2vw, 1.9rem); }
+.xw-cell.block { visibility: hidden; }
+.xw-cell input {
+  width: 100%; height: 100%; min-height: 0; padding: 0; text-align: center; text-transform: uppercase;
+  font-weight: 800; font-size: 0.95rem; border: 2px solid var(--green); border-radius: 3px; background: #fff; caret-color: var(--green);
+}
+.xw-cell input.hl { background: var(--soft-gold); }
+.xw-cell input.is-correct { background: var(--success-soft); border-color: var(--success); }
+.xw-cell input.is-wrong { background: var(--danger-soft); border-color: var(--danger); }
+.xw-num { position: absolute; top: 1px; left: 2px; font-size: 0.55rem; font-weight: 800; color: var(--green); pointer-events: none; }
+.grid-scroll { overflow-x: auto; }
+.clues h3 { margin-top: 0.4rem; }
+.clues ol { list-style: none; padding: 0; margin: 0 0 0.5rem; display: grid; gap: 0.25rem; }
+.clue-btn { width: 100%; text-align: left; border: 2px solid transparent; border-radius: 6px; background: transparent; font: inherit; font-size: 0.9rem; color: var(--ink); padding: 0.25rem 0.4rem; cursor: pointer; line-height: 1.35; }
+.clue-btn.active { border-color: var(--gold); background: var(--soft-gold); }
+.clue-btn .st { font-weight: 900; margin-right: 0.25rem; }
+</style>
+</head>
+<body>
+<main>
+  <header class="card">
+    <span class="eyebrow">Module 6 · Medical Technology</span>
+    <h1>MedTech Vocabulary</h1>
+    <p class="lede">Solve the crossword using key medical technology terms. Select a clue or a square, type your answers, and check them when the grid is full.</p>
+  </header>
+
+<section class="card">
+  <div class="xw-wrap">
+    <div class="grid-scroll" tabindex="0" role="region" aria-label="Crossword grid">
+      <div class="xw-grid" id="grid"></div>
+    </div>
+    <div class="clues" id="clues">
+      <h2>Clues</h2>
+      <p class="hint" id="active-clue" aria-live="polite">Select a clue to start.</p>
+      <h3>Across</h3><ol id="across"></ol>
+      <h3>Down</h3><ol id="down"></ol>
+    </div>
+  </div>
+</section>
+<section class="card">
+  <div class="progress-track" aria-hidden="true"><div class="progress-fill" id="prog"></div></div>
+  <div class="controls"><button type="button" class="btn primary" id="check" disabled>Check the puzzle</button></div>
+  <p class="hint" id="feedback" aria-live="polite"></p>
+</section>
+
+  <section id="summary" class="card" hidden aria-labelledby="summary-heading">
+    <h2 id="summary-heading">How you did</h2>
+    <p class="summary-score" id="summary-score"></p>
+    <div id="summary-detail"></div>
+    <p class="hint" id="summary-note"></p>
+  </section>
+</main>
+
+<div id="live-region" class="visually-hidden" role="status" aria-live="polite"></div>
+
+<footer class="finish-bar">
+  <button type="button" id="finish-button" class="finish-button" disabled>Finish</button>
+</footer>
+
+<script>
+/* ---- SCORM 1.2 wrapper. Degrades silently to standalone preview. -------- */
+const SCORM = (() => {
+  let api = null, initialized = false, finished = false;
+  function findApi(win) {
+    let current = win, attempts = 0;
+    try {
+      while (current && !current.API && current.parent && current.parent !== current && attempts < 500) {
+        attempts += 1; current = current.parent;
+      }
+      if (current && current.API) return current.API;
+      if (win.opener && !win.opener.closed) return findApi(win.opener);
+    } catch (e) { return null; }
+    return null;
+  }
+  function call(method, ...args) {
+    if (!api || typeof api[method] !== "function") return "false";
+    try { return api[method](...args); } catch (e) { return "false"; }
+  }
+  function init() {
+    if (initialized) return true;
+    api = findApi(window);
+    if (!api) return false;
+    initialized = call("LMSInitialize", "") === "true";
+    if (initialized) {
+      const prior = call("LMSGetValue", "cmi.core.lesson_status");
+      if (prior !== "completed" && prior !== "passed") {
+        call("LMSSetValue", "cmi.core.lesson_status", "incomplete");
+      }
+      call("LMSSetValue", "cmi.core.score.min", "0");
+      call("LMSSetValue", "cmi.core.score.max", "100");
+      call("LMSCommit", "");
+    }
+    return initialized;
+  }
+  function setScore(raw) {
+    if (!initialized) return;
+    call("LMSSetValue", "cmi.core.score.raw", String(raw));
+    call("LMSCommit", "");
+  }
+  function finishActivity(score) {
+    if (finished) return;
+    if (initialized) {
+      call("LMSSetValue", "cmi.core.lesson_status", "completed");
+      if (score !== null && score !== undefined) call("LMSSetValue", "cmi.core.score.raw", String(score));
+      call("LMSCommit", "");
+      call("LMSFinish", "");
+    }
+    finished = true;
+  }
+  function unloadSafety() {
+    if (finished || !initialized) return;
+    call("LMSCommit", ""); call("LMSFinish", ""); finished = true;
+  }
+  window.addEventListener("pagehide", unloadSafety);
+  window.addEventListener("beforeunload", unloadSafety);
+  return { init, setScore, finishActivity };
+})();
+SCORM.init();
+
+/* ---- Activity API -------------------------------------------------------
+   The only surface an activity script needs. Handles the Finish button,
+   the live region, the score, and the completion summary, so no activity
+   re-implements them (or gets them subtly wrong).                        */
+const Activity = (() => {
+  const finishBtn = document.getElementById("finish-button");
+  const live = document.getElementById("live-region");
+  const summaryEl = document.getElementById("summary");
+  const scoreEl = document.getElementById("summary-score");
+  const detailEl = document.getElementById("summary-detail");
+  const noteEl = document.getElementById("summary-note");
+  let firstScore = null;   // frozen on first completion so review passes can't inflate it
+  let ready = false;
+
+  function announce(msg) { live.textContent = ""; setTimeout(() => { live.textContent = msg; }, 40); }
+
+  function setReady(on, msg) {
+    ready = !!on;
+    finishBtn.disabled = !ready;
+    if (ready) {
+      finishBtn.classList.add("enabled-pop");
+      setTimeout(() => finishBtn.classList.remove("enabled-pop"), 1400);
+      if (msg) announce(msg);
+    }
+  }
+
+  /* Report the truth: right and missed are arrays of plain strings.
+     Passing neither still renders an honest "you finished" line.        */
+  function summarize({ score = null, right = [], missed = [], note = "" } = {}) {
+    if (firstScore === null && score !== null) firstScore = score;
+    const shown = firstScore === null ? null : firstScore;
+    if (shown !== null) {
+      const total = right.length + missed.length;
+      scoreEl.textContent = total
+        ? `${right.length} of ${total} correct on your first attempt — ${shown}%`
+        : `First-attempt score: ${shown}%`;
+    } else {
+      scoreEl.textContent = "Activity complete.";
+    }
+    detailEl.innerHTML = "";
+    const group = (title, items, cls) => {
+      if (!items.length) return;
+      const wrap = document.createElement("div");
+      wrap.className = "summary-group";
+      const h = document.createElement("h3");
+      h.innerHTML = `<span class="mark ${cls === "ok" ? "ok" : "no"}">${cls === "ok" ? "✓" : "✗"}</span>${title}`;
+      const ul = document.createElement("ul");
+      ul.className = "summary-list";
+      items.forEach(t => { const li = document.createElement("li"); li.textContent = t; ul.appendChild(li); });
+      wrap.appendChild(h); wrap.appendChild(ul); detailEl.appendChild(wrap);
+    };
+    group(`You got these right (${right.length})`, right, "ok");
+    group(`You missed these (${missed.length})`, missed, "no");
+    noteEl.textContent = note || "";
+    summaryEl.hidden = false;
+    summaryEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    if (shown !== null) SCORM.setScore(shown);
+  }
+
+  finishBtn.addEventListener("click", () => {
+    if (!ready) return;
+    SCORM.finishActivity(firstScore);
+    finishBtn.disabled = true;
+    finishBtn.textContent = "Finished ✓";
+    announce("Activity finished and reported as complete.");
+  });
+
+  return { setReady, announce, summarize, get score() { return firstScore; } };
+})();
+
+/* ---- Multi-part coordinator --------------------------------------------
+   For modules that merge two activities into one. Each part reports here
+   instead of calling Activity.setReady / Activity.summarize itself, and only
+   the last part to finish unlocks Finish. Without this, part one would enable
+   the Finish button and a student could submit half an activity.         */
+const Parts = (() => {
+  let expected = 0;
+  const results = new Map();
+  const listeners = [];
+
+  function expect(n) { expected = n; }
+  function isDone(i) { return results.has(i); }
+  function onDone(fn) { listeners.push(fn); }
+
+  function done(index, { score = null, right = [], missed = [], label = "" } = {}) {
+    if (results.has(index)) return;                 // first result stands
+    results.set(index, { score, right, missed, label });
+    listeners.forEach(fn => { try { fn(index); } catch (e) {} });
+    if (results.size < expected) {
+      Activity.announce(`Part ${index} complete. Part ${index + 1} is now available.`);
+      return;
+    }
+    // Merge both parts' results, keeping each item attributed to its part so
+    // the summary says which half a student actually struggled with.
+    // NB: these locals must NOT be named `right` / `missed` — those are already
+    // bound by this function's destructured parameter, and redeclaring them with
+    // const is a SyntaxError that kills the whole inline script silently.
+    const allRight = [], allMissed = [];
+    let weighted = 0, items = 0;
+    [...results.entries()].sort((a, b) => a[0] - b[0]).forEach(([i, r]) => {
+      const tag = r.label ? `${r.label}: ` : `Part ${i}: `;
+      r.right.forEach(t => allRight.push(tag + t));
+      r.missed.forEach(t => allMissed.push(tag + t));
+      const n = r.right.length + r.missed.length;
+      if (r.score !== null && n) { weighted += r.score * n; items += n; }
+      else if (r.score !== null) { weighted += r.score; items += 1; }
+    });
+    const finalScore = items ? Math.round(weighted / items) : null;
+    Activity.setReady(true, "Both parts complete. You can finish the activity.");
+    Activity.summarize({
+      score: finalScore, right: allRight, missed: allMissed,
+      note: "This activity had two parts; the summary above covers both.",
+    });
+  }
+  return { expect, done, isDone, onDone };
+})();
+
+const XW = {"rows": 22, "cols": 13, "entries": [{"n": 3, "dir": "A", "r": 3, "c": 1, "answer": "TELEHEALTH", "clue": "Delivering health services at a distance using telecommunications"}, {"n": 5, "dir": "A", "r": 9, "c": 0, "answer": "FDA", "clue": "Federal agency that approves drugs and medical devices for sale (abbr.)"}, {"n": 8, "dir": "A", "r": 12, "c": 0, "answer": "EFFECTIVENESS", "clue": "How well a technology works in everyday, real-world practice"}, {"n": 10, "dir": "A", "r": 15, "c": 6, "answer": "ORPHAN", "clue": "___ drugs treat rare diseases and get special incentives under a 1983 federal law"}, {"n": 11, "dir": "A", "r": 17, "c": 0, "answer": "INFORMATICS", "clue": "The field that applies information technology to health data and decisions"}, {"n": 12, "dir": "A", "r": 19, "c": 3, "answer": "EFFICACY", "clue": "How well a technology works under ideal, controlled conditions"}, {"n": 13, "dir": "A", "r": 21, "c": 2, "answer": "PATENT", "clue": "Legal protection that gives an inventor exclusive rights for a set number of years"}, {"n": 1, "dir": "D", "r": 0, "c": 3, "answer": "BIOLOGICS", "clue": "Drugs made from living organisms, such as vaccines and many cancer therapies"}, {"n": 2, "dir": "D", "r": 2, "c": 9, "answer": "UTILIZATION", "clue": "How often a technology is actually used once it is available"}, {"n": 4, "dir": "D", "r": 7, "c": 11, "answer": "ASSESSMENT", "clue": "Technology ___: evaluating a technology's safety, efficacy, cost-effectiveness, and social impact"}, {"n": 6, "dir": "D", "r": 9, "c": 1, "answer": "DIFFUSION", "clue": "The spread of a new technology through the health care system after it is introduced"}, {"n": 7, "dir": "D", "r": 11, "c": 3, "answer": "NEED", "clue": "Certificate-of-___ laws require state approval before major capital spending, such as new hospital beds"}, {"n": 9, "dir": "D", "r": 12, "c": 6, "answer": "INNOVATION", "clue": "The development of a new drug, device, or procedure"}]};
+const cells = {};   // "r,c" -> {input, letter, entries:[]}
+const gridEl = document.getElementById("grid");
+gridEl.style.gridTemplateColumns = `repeat(${XW.cols}, auto)`;
+XW.entries.forEach((e, ei) => {
+  for (let i = 0; i < e.answer.length; i++) {
+    const r = e.r + (e.dir === "D" ? i : 0), c = e.c + (e.dir === "A" ? i : 0);
+    const k = r + "," + c;
+    if (!cells[k]) cells[k] = { letter: e.answer[i], entries: [], r, c };
+    cells[k].entries.push(ei);
+  }
+});
+const starts = {}; XW.entries.forEach(e => { starts[e.r + "," + e.c] = e.n; });
+for (let r = 0; r < XW.rows; r++) for (let c = 0; c < XW.cols; c++) {
+  const k = r + "," + c, d = document.createElement("div");
+  d.className = "xw-cell" + (cells[k] ? "" : " block");
+  if (cells[k]) {
+    if (starts[k]) { const s = document.createElement("span"); s.className = "xw-num"; s.textContent = starts[k]; s.setAttribute("aria-hidden", "true"); d.appendChild(s); }
+    const inp = document.createElement("input");
+    inp.maxLength = 1; inp.autocomplete = "off"; inp.setAttribute("autocapitalize", "characters"); inp.spellcheck = false;
+    inp.dataset.k = k;
+    cells[k].input = inp; d.appendChild(inp);
+  }
+  gridEl.appendChild(d);
+}
+let active = 0, done = false;
+const firstTry = Array(XW.entries.length).fill(null);
+const clueBtns = [];
+XW.entries.forEach((e, ei) => {
+  const li = document.createElement("li"), b = document.createElement("button");
+  b.type = "button"; b.className = "clue-btn"; b.innerHTML = `<span class="st"></span><strong>${e.n}.</strong> ${e.clue} (${e.answer.length})`;
+  b.addEventListener("click", () => { setActive(ei); cellsOf(ei)[0].input.focus(); });
+  li.appendChild(b); document.getElementById(e.dir === "A" ? "across" : "down").appendChild(li); clueBtns[ei] = b;
+});
+function cellsOf(ei) { const e = XW.entries[ei], out = []; for (let i = 0; i < e.answer.length; i++) out.push(cells[(e.r + (e.dir === "D" ? i : 0)) + "," + (e.c + (e.dir === "A" ? i : 0))]); return out; }
+function label(ei) { const e = XW.entries[ei]; return `${e.n} ${e.dir === "A" ? "Across" : "Down"}`; }
+function setActive(ei) {
+  active = ei;
+  Object.values(cells).forEach(c => c.input.classList.remove("hl"));
+  cellsOf(ei).forEach(c => c.input.classList.add("hl"));
+  clueBtns.forEach((b, i) => b.classList.toggle("active", i === ei));
+  const e = XW.entries[ei];
+  document.getElementById("active-clue").textContent = `${label(ei)}: ${e.clue} (${e.answer.length} letters)`;
+  Object.values(cells).forEach(c => { const idx = c.entries.indexOf(ei); if (idx >= 0) c.input.setAttribute("aria-label", `${label(ei)}, letter ${cellsOf(ei).indexOf(c) + 1} of ${e.answer.length}`); });
+}
+Object.values(cells).forEach(c => {
+  c.input.addEventListener("focus", () => { if (!c.entries.includes(active)) setActive(c.entries[0]); });
+  c.input.addEventListener("click", () => { if (c.entries.length > 1 && c.entries.includes(active) && document.activeElement === c.input) setActive(c.entries.find(x => x !== active)); });
+  c.input.addEventListener("input", () => {
+    c.input.value = c.input.value.replace(/[^a-z]/gi, "").slice(-1).toUpperCase();
+    c.input.classList.remove("is-wrong");
+    if (c.input.value) { const list = cellsOf(active), i = list.indexOf(c); if (i >= 0 && i < list.length - 1) list[i + 1].input.focus(); }
+    update();
+  });
+  c.input.addEventListener("keydown", ev => {
+    const list = cellsOf(active), i = list.indexOf(c);
+    if (ev.key === "Backspace" && !c.input.value && i > 0) { ev.preventDefault(); list[i - 1].input.value = ""; list[i - 1].input.focus(); update(); }
+    const mv = { ArrowRight: [0, 1], ArrowLeft: [0, -1], ArrowDown: [1, 0], ArrowUp: [-1, 0] }[ev.key];
+    if (mv) { const n = cells[(c.r + mv[0]) + "," + (c.c + mv[1])]; if (n) { ev.preventDefault(); n.input.focus(); } }
+  });
+});
+function update() {
+  const all = Object.values(cells), n = all.filter(c => c.input.value).length;
+  document.getElementById("prog").style.width = (n / all.length * 100) + "%";
+  document.getElementById("check").disabled = done || n < all.length;
+}
+document.getElementById("check").addEventListener("click", () => {
+  let wrongCells = 0;
+  Object.values(cells).forEach(c => {
+    const ok = c.input.value === c.letter;
+    c.input.classList.remove("is-correct", "is-wrong"); c.input.classList.add(ok ? "is-correct" : "is-wrong");
+    if (ok) c.input.readOnly = true; else wrongCells++;
+  });
+  XW.entries.forEach((e, ei) => {
+    const ok = cellsOf(ei).every(c => c.input.value === c.letter);
+    if (firstTry[ei] === null) firstTry[ei] = ok;
+    clueBtns[ei].querySelector(".st").innerHTML = ok ? '<span class="mark ok" aria-hidden="true">✓</span><span class="visually-hidden">Solved.</span>' : '<span class="mark no" aria-hidden="true">✗</span><span class="visually-hidden">Has errors.</span>';
+  });
+  const fb = document.getElementById("feedback");
+  if (!wrongCells) {
+    done = true; update();
+    fb.textContent = "Every square is correct.";
+    const right = [], missed = [];
+    XW.entries.forEach((e, ei) => (firstTry[ei] ? right : missed).push(`${label(ei)}: ${e.answer}`));
+    Activity.summarize({ score: Math.round(right.length / XW.entries.length * 100), right, missed,
+      note: "Efficacy is performance under ideal conditions; effectiveness is performance in real-world practice. Technology assessment weighs both, along with cost and social impact." });
+    Activity.setReady(true, "Crossword solved. You can finish the activity.");
+  } else {
+    fb.textContent = `${wrongCells} square${wrongCells > 1 ? "s are" : " is"} wrong (marked in red, and its clue shows ✗). Correct squares are locked.`;
+    Activity.announce(fb.textContent);
+  }
+});
+Object.values(cells).forEach(c => { const ei = c.entries[0]; c.input.setAttribute("aria-label", `${label(ei)}, letter ${cellsOf(ei).indexOf(c) + 1} of ${XW.entries[ei].answer.length}`); });
+setActive(0); update();
+</script>
+</body>
+</html>

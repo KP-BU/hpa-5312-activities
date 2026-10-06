@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build a Health System — HPA 5312 Module 5</title>
+<style>
+  :root {
+    --green: #154734; --gold: #FFB81C;
+    --ink: #12352a; --muted: #5f7068;
+    --soft-green: #e7f1ed; --soft-gold: #fff4d8; --line: #cfddd7;
+    --danger: #b42318; --danger-soft: #ffe5e2;
+    --success: #1f7a46; --success-soft: #e2f5e8;
+    --shadow: 0 22px 60px rgba(21, 71, 52, 0.16);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Proxima Nova", "Helvetica Neue", Arial, sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(circle at top left, rgba(255,184,28,0.28), transparent 30rem),
+      linear-gradient(135deg, #f7fbf8 0%, #eef7f3 100%);
+    min-height: 100vh;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* ---- Layout ------------------------------------------------------------
+     Phone-first single column. At the 1366x1366 LMS frame the container
+     widens and vertical rhythm tightens, so activities fit without the
+     retrofitted !important layer the previous course needed.              */
+  main {
+    width: min(100%, 46rem);
+    margin: 0 auto;
+    padding: clamp(1rem, 3vw, 1.75rem) clamp(0.85rem, 3vw, 1.5rem) 1.25rem;
+  }
+  @media (min-width: 1100px) and (min-height: 900px) {
+    main { width: min(100%, 1180px); padding-top: 1rem; padding-bottom: 1rem; }
+    h1 { font-size: 1.7rem !important; margin-bottom: 0.25rem !important; }
+    .card { padding: 0.85rem 1.1rem; margin-bottom: 0.7rem; }
+    .lede { margin-bottom: 0.2rem; }
+    /* Opt-in helpers: an activity adds these to its own containers. */
+    .fit-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; align-items: start; }
+    .fit-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; align-items: start; }
+    .fit-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.55rem; align-items: start; }
+    .fit-2 > *, .fit-3 > *, .fit-4 > * { margin-bottom: 0 !important; }
+    .fit-span { grid-column: 1 / -1; }
+  }
+
+  /* Course banner. Decorative — alt="" and role="presentation" keep it out of
+     the accessibility tree, since it carries no information a student needs.
+     It scales with the container at its natural 20:3 ratio, so it costs about
+     177px of height in the wide frame and only ~56px on a phone. */
+  .course-banner {
+    display: block; width: 100%; height: auto;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    margin-bottom: clamp(0.7rem, 2vw, 1rem);
+  }
+  @media (min-width: 1100px) and (min-height: 900px) {
+    .course-banner { margin-bottom: 0.55rem; }
+  }
+  @media print { .course-banner { display: none; } }
+
+  .card {
+    background: rgba(255,255,255,0.94);
+    border: 2px solid rgba(21,71,52,0.1);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    padding: clamp(1rem, 3vw, 1.5rem);
+    margin-bottom: clamp(0.8rem, 2.2vw, 1.15rem);
+  }
+  .eyebrow {
+    display: inline-block; background: var(--soft-gold); color: var(--green);
+    font-size: 0.78rem; font-weight: 800; letter-spacing: 0.08em;
+    text-transform: uppercase; border-radius: 999px;
+    padding: 0.3rem 0.85rem; margin: 0 0 0.65rem;
+  }
+  h1 { color: var(--green); font-size: clamp(1.35rem, 4.5vw, 1.85rem); line-height: 1.2; margin: 0 0 0.5rem; }
+  h2 { color: var(--green); font-size: 1.1rem; margin: 0 0 0.5rem; }
+  h3 { color: var(--green); font-size: 0.98rem; margin: 0 0 0.35rem; }
+  p { line-height: 1.55; margin: 0 0 0.6rem; }
+  .lede { color: var(--muted); font-weight: 600; }
+  .hint { color: var(--muted); font-size: 0.88rem; }
+
+  /* ---- Controls ---------------------------------------------------------- */
+  .btn {
+    min-height: 2.9rem; padding: 0 1.1rem;
+    border: 2px solid var(--green); border-radius: 8px;
+    background: #fff; color: var(--green);
+    font: inherit; font-weight: 800; font-size: 0.95rem; cursor: pointer;
+    transition: background 150ms ease, color 150ms ease, opacity 150ms ease;
+  }
+  .btn:not(:disabled):hover, .btn:not(:disabled):focus-visible { background: var(--green); color: #fff; outline: none; }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn.primary { background: var(--gold); border-color: var(--gold); }
+  .btn.primary:not(:disabled):hover, .btn.primary:not(:disabled):focus-visible { background: var(--green); border-color: var(--green); color: #fff; }
+  .controls { display: flex; flex-wrap: wrap; gap: 0.55rem; margin-top: 0.7rem; }
+  .controls .btn { flex: 1 1 10rem; }
+
+  select, input[type="text"], textarea {
+    font: inherit; color: var(--ink); background: #fff;
+    border: 2px solid var(--line); border-radius: 6px;
+    padding: 0.45rem 0.55rem; min-height: 2.6rem;
+  }
+  select:focus-visible, input:focus-visible, textarea:focus-visible,
+  button:focus-visible, [tabindex]:focus-visible, a:focus-visible {
+    outline: 3px solid var(--gold); outline-offset: 2px;
+  }
+
+  /* State signalling always pairs colour with a mark or text (WCAG 1.4.1). */
+  .is-correct { border-color: var(--success) !important; background: var(--success-soft); }
+  .is-wrong   { border-color: var(--danger) !important;  background: var(--danger-soft); }
+  .mark { font-weight: 900; margin-right: 0.3rem; }
+  .mark.ok { color: var(--success); }
+  .mark.no { color: var(--danger); }
+
+  .progress-track { height: 0.55rem; background: var(--soft-green); border-radius: 999px; overflow: hidden; margin-top: 0.6rem; }
+  .progress-fill { height: 100%; width: 0%; background: var(--green); transition: width 220ms ease; }
+
+  /* ---- Completion summary (must report what actually happened) ---------- */
+  #summary[hidden] { display: none; }
+  #summary { border-color: var(--success); }
+  #summary h2 { display: flex; align-items: center; gap: 0.4rem; }
+  .summary-score { font-size: 1.05rem; font-weight: 900; color: var(--green); margin: 0 0 0.6rem; }
+  .summary-list { margin: 0 0 0.6rem; padding-left: 1.1rem; }
+  .summary-list li { margin-bottom: 0.25rem; line-height: 1.45; }
+  .summary-group { margin-bottom: 0.7rem; }
+  .summary-group h3 { margin-bottom: 0.2rem; }
+
+  /* ---- Two-part activities ---------------------------------------------
+     Some modules combine two activities into one sequential experience.
+     Only one part is on screen at a time, so a merged activity costs no more
+     height than the taller of its two halves.                             */
+  .part-steps { display: flex; gap: 0.5rem; margin-bottom: 0.8rem; flex-wrap: wrap; }
+  .part-step {
+    flex: 1 1 12rem; text-align: left;
+    border: 2px solid var(--line); border-radius: 8px;
+    background: rgba(255,255,255,0.9); color: var(--muted);
+    padding: 0.5rem 0.75rem; font: inherit; font-weight: 700; font-size: 0.9rem;
+    cursor: pointer; transition: border-color 150ms ease, color 150ms ease;
+  }
+  .part-step .part-n { display: block; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .part-step[aria-current="true"] { border-color: var(--green); color: var(--green); background: var(--soft-green); }
+  .part-step[data-state="done"] { border-color: var(--success); color: var(--success); }
+  .part-step[data-state="done"] .part-n::after { content: " ✓"; }
+  .part-step[data-state="locked"] { opacity: 0.55; cursor: not-allowed; }
+  .part-step[data-state="locked"] .part-n::after { content: " (locked)"; }
+  .part-panel[hidden] { display: none; }
+
+  .visually-hidden {
+    position: absolute !important; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+
+  /* ---- Finish bar -------------------------------------------------------- */
+  .finish-bar {
+    position: sticky; bottom: 0; z-index: 30;
+    padding: 0.7rem 1rem calc(0.7rem + env(safe-area-inset-bottom));
+    background: rgba(247, 251, 248, 0.92);
+    backdrop-filter: blur(6px); border-top: 2px solid var(--line);
+  }
+  .finish-button {
+    display: block; width: min(100%, 22rem); margin: 0 auto; min-height: 3rem;
+    border: 2px solid var(--gold); border-radius: 8px;
+    background: var(--gold); color: var(--green);
+    font: inherit; font-weight: 900; font-size: 1.05rem; cursor: pointer;
+    transition: background 160ms ease, color 160ms ease, opacity 160ms ease;
+  }
+  .finish-button:disabled { opacity: 0.45; cursor: not-allowed; }
+  .finish-button:not(:disabled):hover, .finish-button:not(:disabled):focus-visible {
+    background: var(--green); border-color: var(--green); color: #ffffff; outline: none;
+  }
+  @keyframes finish-pop { 0%{transform:scale(1)} 50%{transform:scale(1.04)} 100%{transform:scale(1)} }
+  .finish-button.enabled-pop { animation: finish-pop 600ms ease 2; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+  @media (max-width: 520px) {
+    .controls { flex-direction: column; }
+    .controls .btn { flex: none; width: 100%; }
+    select, input[type="text"] { width: 100%; }
+  }
+
+.tri { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 0.4rem 0 0.2rem; }
+.tri span { border: 2px solid var(--line); border-radius: 999px; padding: 0.2rem 0.7rem; font-size: 0.85rem; font-weight: 700; color: var(--muted); }
+.choices { display: grid; gap: 0.5rem; margin-top: 0.6rem; }
+.choice { text-align: left; border: 2px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); font: inherit; padding: 0.7rem 0.85rem; cursor: pointer; line-height: 1.4; }
+.choice:hover, .choice:focus-visible { border-color: var(--green); background: var(--soft-green); }
+.choice strong { color: var(--green); }
+.consequence { border-left: 4px solid var(--gold); background: var(--soft-gold); padding: 0.6rem 0.8rem; border-radius: 6px; margin: 0.5rem 0; }
+.path { list-style: none; padding: 0; margin: 0 0 0.4rem; display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.path li { font-size: 0.82rem; font-weight: 700; background: var(--soft-green); color: var(--green); border-radius: 999px; padding: 0.2rem 0.65rem; }
+.ending h3 { font-size: 1.15rem; }
+.trade { display: grid; gap: 0.4rem; }
+.trade div { border: 2px solid var(--line); border-radius: 6px; padding: 0.45rem 0.6rem; background: #fff; }
+</style>
+</head>
+<body>
+<main>
+  <header class="card">
+    <span class="eyebrow">Module 5 · Health Care Systems in Other Countries</span>
+    <h1>Build a Health System</h1>
+    <p class="lede">You chair a commission designing a country&#x27;s health system. Make three decisions, see the trade-offs each creates on the health policy trilemma, and find out which real-world model you built.</p>
+  </header>
+
+<section class="card" aria-labelledby="tri-h">
+  <h2 id="tri-h">The health policy trilemma</h2>
+  <p>Every system trades among three goals. Improving one usually costs you on another:</p>
+  <div class="tri"><span>Access: who is covered</span><span>Cost: how much the nation spends</span><span>Quality and choice: what care people get and from whom</span></div>
+</section>
+<section class="card" id="stage" aria-live="polite" aria-labelledby="stage-h">
+  <h2 id="stage-h" tabindex="-1">Decision 1 of 3</h2>
+  <ul class="path" id="path" aria-label="Your decisions so far"></ul>
+  <div id="stage-body"></div>
+</section>
+
+  <section id="summary" class="card" hidden aria-labelledby="summary-heading">
+    <h2 id="summary-heading">How you did</h2>
+    <p class="summary-score" id="summary-score"></p>
+    <div id="summary-detail"></div>
+    <p class="hint" id="summary-note"></p>
+  </section>
+</main>
+
+<div id="live-region" class="visually-hidden" role="status" aria-live="polite"></div>
+
+<footer class="finish-bar">
+  <button type="button" id="finish-button" class="finish-button" disabled>Finish</button>
+</footer>
+
+<script>
+/* ---- SCORM 1.2 wrapper. Degrades silently to standalone preview. -------- */
+const SCORM = (() => {
+  let api = null, initialized = false, finished = false;
+  function findApi(win) {
+    let current = win, attempts = 0;
+    try {
+      while (current && !current.API && current.parent && current.parent !== current && attempts < 500) {
+        attempts += 1; current = current.parent;
+      }
+      if (current && current.API) return current.API;
+      if (win.opener && !win.opener.closed) return findApi(win.opener);
+    } catch (e) { return null; }
+    return null;
+  }
+  function call(method, ...args) {
+    if (!api || typeof api[method] !== "function") return "false";
+    try { return api[method](...args); } catch (e) { return "false"; }
+  }
+  function init() {
+    if (initialized) return true;
+    api = findApi(window);
+    if (!api) return false;
+    initialized = call("LMSInitialize", "") === "true";
+    if (initialized) {
+      const prior = call("LMSGetValue", "cmi.core.lesson_status");
+      if (prior !== "completed" && prior !== "passed") {
+        call("LMSSetValue", "cmi.core.lesson_status", "incomplete");
+      }
+      call("LMSSetValue", "cmi.core.score.min", "0");
+      call("LMSSetValue", "cmi.core.score.max", "100");
+      call("LMSCommit", "");
+    }
+    return initialized;
+  }
+  function setScore(raw) {
+    if (!initialized) return;
+    call("LMSSetValue", "cmi.core.score.raw", String(raw));
+    call("LMSCommit", "");
+  }
+  function finishActivity(score) {
+    if (finished) return;
+    if (initialized) {
+      call("LMSSetValue", "cmi.core.lesson_status", "completed");
+      if (score !== null && score !== undefined) call("LMSSetValue", "cmi.core.score.raw", String(score));
+      call("LMSCommit", "");
+      call("LMSFinish", "");
+    }
+    finished = true;
+  }
+  function unloadSafety() {
+    if (finished || !initialized) return;
+    call("LMSCommit", ""); call("LMSFinish", ""); finished = true;
+  }
+  window.addEventListener("pagehide", unloadSafety);
+  window.addEventListener("beforeunload", unloadSafety);
+  return { init, setScore, finishActivity };
+})();
+SCORM.init();
+
+/* ---- Activity API -------------------------------------------------------
+   The only surface an activity script needs. Handles the Finish button,
+   the live region, the score, and the completion summary, so no activity
+   re-implements them (or gets them subtly wrong).                        */
+const Activity = (() => {
+  const finishBtn = document.getElementById("finish-button");
+  const live = document.getElementById("live-region");
+  const summaryEl = document.getElementById("summary");
+  const scoreEl = document.getElementById("summary-score");
+  const detailEl = document.getElementById("summary-detail");
+  const noteEl = document.getElementById("summary-note");
+  let firstScore = null;   // frozen on first completion so review passes can't inflate it
+  let ready = false;
+
+  function announce(msg) { live.textContent = ""; setTimeout(() => { live.textContent = msg; }, 40); }
+
+  function setReady(on, msg) {
+    ready = !!on;
+    finishBtn.disabled = !ready;
+    if (ready) {
+      finishBtn.classList.add("enabled-pop");
+      setTimeout(() => finishBtn.classList.remove("enabled-pop"), 1400);
+      if (msg) announce(msg);
+    }
+  }
+
+  /* Report the truth: right and missed are arrays of plain strings.
+     Passing neither still renders an honest "you finished" line.        */
+  function summarize({ score = null, right = [], missed = [], note = "" } = {}) {
+    if (firstScore === null && score !== null) firstScore = score;
+    const shown = firstScore === null ? null : firstScore;
+    if (shown !== null) {
+      const total = right.length + missed.length;
+      scoreEl.textContent = total
+        ? `${right.length} of ${total} correct on your first attempt — ${shown}%`
+        : `First-attempt score: ${shown}%`;
+    } else {
+      scoreEl.textContent = "Activity complete.";
+    }
+    detailEl.innerHTML = "";
+    const group = (title, items, cls) => {
+      if (!items.length) return;
+      const wrap = document.createElement("div");
+      wrap.className = "summary-group";
+      const h = document.createElement("h3");
+      h.innerHTML = `<span class="mark ${cls === "ok" ? "ok" : "no"}">${cls === "ok" ? "✓" : "✗"}</span>${title}`;
+      const ul = document.createElement("ul");
+      ul.className = "summary-list";
+      items.forEach(t => { const li = document.createElement("li"); li.textContent = t; ul.appendChild(li); });
+      wrap.appendChild(h); wrap.appendChild(ul); detailEl.appendChild(wrap);
+    };
+    group(`You got these right (${right.length})`, right, "ok");
+    group(`You missed these (${missed.length})`, missed, "no");
+    noteEl.textContent = note || "";
+    summaryEl.hidden = false;
+    summaryEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    if (shown !== null) SCORM.setScore(shown);
+  }
+
+  finishBtn.addEventListener("click", () => {
+    if (!ready) return;
+    SCORM.finishActivity(firstScore);
+    finishBtn.disabled = true;
+    finishBtn.textContent = "Finished ✓";
+    announce("Activity finished and reported as complete.");
+  });
+
+  return { setReady, announce, summarize, get score() { return firstScore; } };
+})();
+
+/* ---- Multi-part coordinator --------------------------------------------
+   For modules that merge two activities into one. Each part reports here
+   instead of calling Activity.setReady / Activity.summarize itself, and only
+   the last part to finish unlocks Finish. Without this, part one would enable
+   the Finish button and a student could submit half an activity.         */
+const Parts = (() => {
+  let expected = 0;
+  const results = new Map();
+  const listeners = [];
+
+  function expect(n) { expected = n; }
+  function isDone(i) { return results.has(i); }
+  function onDone(fn) { listeners.push(fn); }
+
+  function done(index, { score = null, right = [], missed = [], label = "" } = {}) {
+    if (results.has(index)) return;                 // first result stands
+    results.set(index, { score, right, missed, label });
+    listeners.forEach(fn => { try { fn(index); } catch (e) {} });
+    if (results.size < expected) {
+      Activity.announce(`Part ${index} complete. Part ${index + 1} is now available.`);
+      return;
+    }
+    // Merge both parts' results, keeping each item attributed to its part so
+    // the summary says which half a student actually struggled with.
+    // NB: these locals must NOT be named `right` / `missed` — those are already
+    // bound by this function's destructured parameter, and redeclaring them with
+    // const is a SyntaxError that kills the whole inline script silently.
+    const allRight = [], allMissed = [];
+    let weighted = 0, items = 0;
+    [...results.entries()].sort((a, b) => a[0] - b[0]).forEach(([i, r]) => {
+      const tag = r.label ? `${r.label}: ` : `Part ${i}: `;
+      r.right.forEach(t => allRight.push(tag + t));
+      r.missed.forEach(t => allMissed.push(tag + t));
+      const n = r.right.length + r.missed.length;
+      if (r.score !== null && n) { weighted += r.score * n; items += n; }
+      else if (r.score !== null) { weighted += r.score; items += 1; }
+    });
+    const finalScore = items ? Math.round(weighted / items) : null;
+    Activity.setReady(true, "Both parts complete. You can finish the activity.");
+    Activity.summarize({
+      score: finalScore, right: allRight, missed: allMissed,
+      note: "This activity had two parts; the summary above covers both.",
+    });
+  }
+  return { expect, done, isDone, onDone };
+})();
+
+const D1 = {
+  h: "Decision 1 of 3: How will the country pay for care?",
+  p: "Your first decision sets the financing model. Every later choice builds on it.",
+  o: [
+    { k: "tax", label: "General taxes", txt: "The government pays for care directly out of general tax revenue.", c: "Coverage becomes a right of citizenship, and the government controls the overall budget. Health care now competes with every other line in the national budget." },
+    { k: "funds", label: "Payroll-funded sickness funds", txt: "Employers and workers must contribute to nonprofit insurance funds that cover everyone, including people without jobs.", c: "Coverage is universal but runs through many nonprofit funds instead of one government payer. Regulators must set rules so the funds can't turn away sick people or profit from them." },
+    { k: "single", label: "One national insurance plan", txt: "A single government-run insurance program, funded by taxes or premiums, enrolls every resident.", c: "One payer covers everyone, which gives it strong bargaining power over prices and keeps administrative costs low." },
+    { k: "mixed", label: "A private and public mix", txt: "Most people buy private insurance through an employer or on their own; government programs cover older adults and some low-income people.", c: "People and employers get wide choice of plans, but anyone outside an employer plan or a public program may end up uninsured." }
+  ]
+};
+const D2 = {
+  h: "Decision 2 of 3: Who delivers the care?",
+  p: "Now decide who owns the hospitals and employs the clinicians.",
+  o: [
+    { k: "public", label: "Mostly government", txt: "The government owns most hospitals and employs many of the physicians.", c: "The government can plan where services go and hold costs down, but patients have less choice of provider and waits can grow when budgets are tight." },
+    { k: "private", label: "Mostly private", txt: "Hospitals and physicians are private, and they are paid by whoever finances the system.", c: "Providers compete and patients keep more choice, but someone has to regulate prices or spending will rise." }
+  ]
+};
+const D3 = {
+  h: "Decision 3 of 3: How will you control moral hazard?",
+  p: "When care feels free at the point of service, people tend to use more of it. Pick your main tool for keeping use in check.",
+  o: [
+    { k: "costshare", label: "Cost-sharing", txt: "Patients pay deductibles, copays, or coinsurance when they use care.", c: "Patients think twice about low-value care, but some also skip care they need, especially people with low incomes." },
+    { k: "gatekeep", label: "Gatekeeping", txt: "Patients must see a primary care physician, who refers them to specialists and hospitals.", c: "Specialist and hospital use falls and care is better coordinated, but patients have less freedom to go straight to a specialist." },
+    { k: "supply", label: "Supply-side limits", txt: "The system caps budgets, numbers of specialists, and expensive equipment such as MRI scanners.", c: "Spending stays predictable, but patients may wait longer for elective procedures and advanced imaging." }
+  ]
+};
+const MODELS = {
+  beveridge: { name: "the Beveridge model", ex: "United Kingdom (NHS), Spain, New Zealand", d: "Care is financed through taxes and largely delivered by government-owned hospitals and government-employed clinicians.", access: "Universal, free or nearly free at the point of care.", cost: "Low spending per person, set by the national budget.", qual: "Patients have limited choice of provider and can face waits for elective care." },
+  bismarck: { name: "the Bismarck model", ex: "Germany, Japan, France, Switzerland", d: "Mandatory, nonprofit sickness funds paid for by employers and workers cover everyone, and providers are mostly private.", access: "Universal through many regulated funds.", cost: "Moderate to high, held in check by negotiated, regulated prices.", qual: "Patients get broad choice of providers and short waits." },
+  nhi: { name: "the national health insurance model", ex: "Canada, Taiwan, South Korea", d: "A single government insurer pays private providers, and everyone is enrolled.", access: "Universal under one public plan.", cost: "Low administrative costs and strong price bargaining.", qual: "Patients keep their choice of provider but may wait for some elective procedures." },
+  american: { name: "the American model", ex: "The United States", d: "A mix of employer-based private insurance, individually purchased plans, and public programs such as Medicare and Medicaid, delivered mostly by private providers.", access: "Not universal; coverage depends on employment, age, income, and where you live.", cost: "The highest spending per person in the world.", qual: "Wide choice and fast access to advanced technology for people with good coverage." }
+};
+function modelFor(pay, delivery) {
+  if (pay === "mixed") return { m: "american", note: "" };
+  if (pay === "funds") return { m: "bismarck", note: delivery === "public" ? "Bismarck countries usually rely on private providers; government-run delivery would push your design toward Beveridge." : "" };
+  if (pay === "single") return { m: delivery === "public" ? "beveridge" : "nhi", note: delivery === "public" ? "A single public payer that also owns the providers is essentially the Beveridge model." : "" };
+  return { m: delivery === "public" ? "beveridge" : "nhi", note: delivery === "private" ? "Tax financing paying private providers puts your design closest to national health insurance." : "" };
+}
+const picks = [];
+const body = document.getElementById("stage-body"), heading = document.getElementById("stage-h"), pathEl = document.getElementById("path");
+function renderPath() { pathEl.innerHTML = picks.map(p => `<li>${p.label}</li>`).join(""); }
+function showDecision(D, next) {
+  heading.textContent = D.h;
+  body.innerHTML = `<p>${D.p}</p><div class="choices">${D.o.map((o, i) => `<button type="button" class="choice" data-i="${i}"><strong>${o.label}.</strong> ${o.txt}</button>`).join("")}</div>`;
+  body.querySelectorAll(".choice").forEach(b => b.addEventListener("click", () => {
+    const o = D.o[Number(b.dataset.i)];
+    picks.push(o); renderPath();
+    heading.textContent = `You chose: ${o.label}`;
+    body.innerHTML = `<div class="consequence"><strong>What happens:</strong> ${o.c}</div><div class="controls"><button type="button" class="btn primary" id="cont">${next ? "Continue" : "See the system you built"}</button></div>`;
+    heading.focus();
+    document.getElementById("cont").addEventListener("click", () => { next ? next() : showEnding(); heading.focus(); });
+  }));
+}
+function showEnding() {
+  const { m, note } = modelFor(picks[0].k, picks[1].k);
+  const M = MODELS[m];
+  heading.textContent = `You built ${M.name}`;
+  body.innerHTML = `<div class="ending"><p>${M.d}</p><p><strong>Real-world examples:</strong> ${M.ex}</p>${note ? `<p class="hint">${note}</p>` : ""}
+    <h3>Where it lands on the trilemma</h3>
+    <div class="trade"><div><strong>Access:</strong> ${M.access}</div><div><strong>Cost:</strong> ${M.cost}</div><div><strong>Quality and choice:</strong> ${M.qual}</div></div>
+    <p style="margin-top:0.6rem"><strong>Your moral hazard tool:</strong> ${picks[2].label}. ${picks[2].c}</p>
+    <p class="hint">Want to compare? Choose "Design another system" to try a different path. Your first design is what gets reported.</p>
+    <div class="controls"><button type="button" class="btn" id="again">Design another system</button></div></div>`;
+  document.getElementById("again").addEventListener("click", () => { picks.length = 0; renderPath(); showDecision(D1, () => showDecision(D2, () => showDecision(D3, null))); heading.focus(); });
+  if (Activity.score === null && !window.__reported) {
+    window.__reported = true;
+    Activity.summarize({ score: null, right: [], missed: [],
+      note: `Your design: ${picks[0].label} financing, ${picks[1].label.toLowerCase()} delivery, and ${picks[2].label.toLowerCase()} to control moral hazard, which makes it ${M.name} (${M.ex}). There is no single right design; every model gives up something on access, cost, or quality and choice. Use these trade-offs when you sketch a framework for a new U.S. system.` });
+    Activity.setReady(true, "You reached an ending. You can finish the activity.");
+  }
+}
+showDecision(D1, () => showDecision(D2, () => showDecision(D3, null)));
+</script>
+</body>
+</html>

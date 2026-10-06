@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>U.S. or Elsewhere? — HPA 5312 Module 1</title>
+<style>
+  :root {
+    --green: #154734; --gold: #FFB81C;
+    --ink: #12352a; --muted: #5f7068;
+    --soft-green: #e7f1ed; --soft-gold: #fff4d8; --line: #cfddd7;
+    --danger: #b42318; --danger-soft: #ffe5e2;
+    --success: #1f7a46; --success-soft: #e2f5e8;
+    --shadow: 0 22px 60px rgba(21, 71, 52, 0.16);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Proxima Nova", "Helvetica Neue", Arial, sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(circle at top left, rgba(255,184,28,0.28), transparent 30rem),
+      linear-gradient(135deg, #f7fbf8 0%, #eef7f3 100%);
+    min-height: 100vh;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* ---- Layout ------------------------------------------------------------
+     Phone-first single column. At the 1366x1366 LMS frame the container
+     widens and vertical rhythm tightens, so activities fit without the
+     retrofitted !important layer the previous course needed.              */
+  main {
+    width: min(100%, 46rem);
+    margin: 0 auto;
+    padding: clamp(1rem, 3vw, 1.75rem) clamp(0.85rem, 3vw, 1.5rem) 1.25rem;
+  }
+  @media (min-width: 1100px) and (min-height: 900px) {
+    main { width: min(100%, 1180px); padding-top: 1rem; padding-bottom: 1rem; }
+    h1 { font-size: 1.7rem !important; margin-bottom: 0.25rem !important; }
+    .card { padding: 0.85rem 1.1rem; margin-bottom: 0.7rem; }
+    .lede { margin-bottom: 0.2rem; }
+    /* Opt-in helpers: an activity adds these to its own containers. */
+    .fit-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; align-items: start; }
+    .fit-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; align-items: start; }
+    .fit-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.55rem; align-items: start; }
+    .fit-2 > *, .fit-3 > *, .fit-4 > * { margin-bottom: 0 !important; }
+    .fit-span { grid-column: 1 / -1; }
+  }
+
+  /* Course banner. Decorative — alt="" and role="presentation" keep it out of
+     the accessibility tree, since it carries no information a student needs.
+     It scales with the container at its natural 20:3 ratio, so it costs about
+     177px of height in the wide frame and only ~56px on a phone. */
+  .course-banner {
+    display: block; width: 100%; height: auto;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    margin-bottom: clamp(0.7rem, 2vw, 1rem);
+  }
+  @media (min-width: 1100px) and (min-height: 900px) {
+    .course-banner { margin-bottom: 0.55rem; }
+  }
+  @media print { .course-banner { display: none; } }
+
+  .card {
+    background: rgba(255,255,255,0.94);
+    border: 2px solid rgba(21,71,52,0.1);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    padding: clamp(1rem, 3vw, 1.5rem);
+    margin-bottom: clamp(0.8rem, 2.2vw, 1.15rem);
+  }
+  .eyebrow {
+    display: inline-block; background: var(--soft-gold); color: var(--green);
+    font-size: 0.78rem; font-weight: 800; letter-spacing: 0.08em;
+    text-transform: uppercase; border-radius: 999px;
+    padding: 0.3rem 0.85rem; margin: 0 0 0.65rem;
+  }
+  h1 { color: var(--green); font-size: clamp(1.35rem, 4.5vw, 1.85rem); line-height: 1.2; margin: 0 0 0.5rem; }
+  h2 { color: var(--green); font-size: 1.1rem; margin: 0 0 0.5rem; }
+  h3 { color: var(--green); font-size: 0.98rem; margin: 0 0 0.35rem; }
+  p { line-height: 1.55; margin: 0 0 0.6rem; }
+  .lede { color: var(--muted); font-weight: 600; }
+  .hint { color: var(--muted); font-size: 0.88rem; }
+
+  /* ---- Controls ---------------------------------------------------------- */
+  .btn {
+    min-height: 2.9rem; padding: 0 1.1rem;
+    border: 2px solid var(--green); border-radius: 8px;
+    background: #fff; color: var(--green);
+    font: inherit; font-weight: 800; font-size: 0.95rem; cursor: pointer;
+    transition: background 150ms ease, color 150ms ease, opacity 150ms ease;
+  }
+  .btn:not(:disabled):hover, .btn:not(:disabled):focus-visible { background: var(--green); color: #fff; outline: none; }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn.primary { background: var(--gold); border-color: var(--gold); }
+  .btn.primary:not(:disabled):hover, .btn.primary:not(:disabled):focus-visible { background: var(--green); border-color: var(--green); color: #fff; }
+  .controls { display: flex; flex-wrap: wrap; gap: 0.55rem; margin-top: 0.7rem; }
+  .controls .btn { flex: 1 1 10rem; }
+
+  select, input[type="text"], textarea {
+    font: inherit; color: var(--ink); background: #fff;
+    border: 2px solid var(--line); border-radius: 6px;
+    padding: 0.45rem 0.55rem; min-height: 2.6rem;
+  }
+  select:focus-visible, input:focus-visible, textarea:focus-visible,
+  button:focus-visible, [tabindex]:focus-visible, a:focus-visible {
+    outline: 3px solid var(--gold); outline-offset: 2px;
+  }
+
+  /* State signalling always pairs colour with a mark or text (WCAG 1.4.1). */
+  .is-correct { border-color: var(--success) !important; background: var(--success-soft); }
+  .is-wrong   { border-color: var(--danger) !important;  background: var(--danger-soft); }
+  .mark { font-weight: 900; margin-right: 0.3rem; }
+  .mark.ok { color: var(--success); }
+  .mark.no { color: var(--danger); }
+
+  .progress-track { height: 0.55rem; background: var(--soft-green); border-radius: 999px; overflow: hidden; margin-top: 0.6rem; }
+  .progress-fill { height: 100%; width: 0%; background: var(--green); transition: width 220ms ease; }
+
+  /* ---- Completion summary (must report what actually happened) ---------- */
+  #summary[hidden] { display: none; }
+  #summary { border-color: var(--success); }
+  #summary h2 { display: flex; align-items: center; gap: 0.4rem; }
+  .summary-score { font-size: 1.05rem; font-weight: 900; color: var(--green); margin: 0 0 0.6rem; }
+  .summary-list { margin: 0 0 0.6rem; padding-left: 1.1rem; }
+  .summary-list li { margin-bottom: 0.25rem; line-height: 1.45; }
+  .summary-group { margin-bottom: 0.7rem; }
+  .summary-group h3 { margin-bottom: 0.2rem; }
+
+  /* ---- Two-part activities ---------------------------------------------
+     Some modules combine two activities into one sequential experience.
+     Only one part is on screen at a time, so a merged activity costs no more
+     height than the taller of its two halves.                             */
+  .part-steps { display: flex; gap: 0.5rem; margin-bottom: 0.8rem; flex-wrap: wrap; }
+  .part-step {
+    flex: 1 1 12rem; text-align: left;
+    border: 2px solid var(--line); border-radius: 8px;
+    background: rgba(255,255,255,0.9); color: var(--muted);
+    padding: 0.5rem 0.75rem; font: inherit; font-weight: 700; font-size: 0.9rem;
+    cursor: pointer; transition: border-color 150ms ease, color 150ms ease;
+  }
+  .part-step .part-n { display: block; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .part-step[aria-current="true"] { border-color: var(--green); color: var(--green); background: var(--soft-green); }
+  .part-step[data-state="done"] { border-color: var(--success); color: var(--success); }
+  .part-step[data-state="done"] .part-n::after { content: " ✓"; }
+  .part-step[data-state="locked"] { opacity: 0.55; cursor: not-allowed; }
+  .part-step[data-state="locked"] .part-n::after { content: " (locked)"; }
+  .part-panel[hidden] { display: none; }
+
+  .visually-hidden {
+    position: absolute !important; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+
+  /* ---- Finish bar -------------------------------------------------------- */
+  .finish-bar {
+    position: sticky; bottom: 0; z-index: 30;
+    padding: 0.7rem 1rem calc(0.7rem + env(safe-area-inset-bottom));
+    background: rgba(247, 251, 248, 0.92);
+    backdrop-filter: blur(6px); border-top: 2px solid var(--line);
+  }
+  .finish-button {
+    display: block; width: min(100%, 22rem); margin: 0 auto; min-height: 3rem;
+    border: 2px solid var(--gold); border-radius: 8px;
+    background: var(--gold); color: var(--green);
+    font: inherit; font-weight: 900; font-size: 1.05rem; cursor: pointer;
+    transition: background 160ms ease, color 160ms ease, opacity 160ms ease;
+  }
+  .finish-button:disabled { opacity: 0.45; cursor: not-allowed; }
+  .finish-button:not(:disabled):hover, .finish-button:not(:disabled):focus-visible {
+    background: var(--green); border-color: var(--green); color: #ffffff; outline: none;
+  }
+  @keyframes finish-pop { 0%{transform:scale(1)} 50%{transform:scale(1.04)} 100%{transform:scale(1)} }
+  .finish-button.enabled-pop { animation: finish-pop 600ms ease 2; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+  @media (max-width: 520px) {
+    .controls { flex-direction: column; }
+    .controls .btn { flex: none; width: 100%; }
+    select, input[type="text"] { width: 100%; }
+  }
+
+.sort-pool { display: flex; flex-wrap: wrap; gap: 0.5rem; min-height: 3rem; }
+.chip {
+  display: inline-flex; align-items: center; gap: 0.3rem; text-align: left;
+  border: 2px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink);
+  padding: 0.5rem 0.7rem; font: inherit; font-size: 0.92rem; font-weight: 600; cursor: grab;
+  line-height: 1.35; max-width: 100%;
+}
+.chip[aria-pressed="true"] { border-color: var(--gold); background: var(--soft-gold); box-shadow: 0 0 0 3px rgba(255,184,28,0.35); }
+.chip.locked { cursor: default; }
+.bin { border: 2px dashed var(--line); border-radius: 8px; padding: 0.7rem; min-height: 7rem; background: rgba(255,255,255,0.7); }
+.bin.drag-over { border-color: var(--green); background: var(--soft-green); }
+.bin h2 { font-size: 1rem; }
+.bin .place-btn { width: 100%; margin-bottom: 0.5rem; }
+.bin-items { display: flex; flex-direction: column; gap: 0.4rem; }
+.status-line { font-weight: 700; color: var(--green); margin-top: 0.4rem; }
+</style>
+</head>
+<body>
+<main>
+  <header class="card">
+    <span class="eyebrow">Module 1 · Overview of U.S. Health Care Delivery</span>
+    <h1>U.S. or Elsewhere?</h1>
+    <p class="lede">Sort each feature into the health system it describes: the U.S. system, or the typical national system in other developed nations such as Canada, the U.K., or Germany.</p>
+  </header>
+
+<section class="card" aria-labelledby="pool-h">
+  <h2 id="pool-h">Features to sort</h2>
+  <p class="hint">Drag a feature into a column, or select a feature and then press a column's "Place here" button. Check your sort when every feature is placed.</p>
+  <div id="pool" class="sort-pool" role="list" aria-label="Unsorted features"></div>
+</section>
+<div class="fit-2">
+  <section class="card bin" id="bin-us" data-bin="us" aria-labelledby="bin-us-h">
+    <h2 id="bin-us-h">U.S. health care system</h2>
+    <button type="button" class="btn place-btn" data-place="us">Place here</button>
+    <div class="bin-items" role="list" aria-label="Placed in U.S. health care system"></div>
+  </section>
+  <section class="card bin" id="bin-other" data-bin="other" aria-labelledby="bin-other-h">
+    <h2 id="bin-other-h">Typical national system elsewhere</h2>
+    <button type="button" class="btn place-btn" data-place="other">Place here</button>
+    <div class="bin-items" role="list" aria-label="Placed in typical national system elsewhere"></div>
+  </section>
+</div>
+<section class="card">
+  <div class="progress-track" aria-hidden="true"><div class="progress-fill" id="prog"></div></div>
+  <p class="status-line" id="status">0 of 12 placed.</p>
+  <div class="controls">
+    <button type="button" class="btn primary" id="check" disabled>Check my sort</button>
+    <button type="button" class="btn" id="retry" hidden>Move the misplaced features back</button>
+  </div>
+  <p class="hint" id="feedback" aria-live="polite"></p>
+</section>
+
+  <section id="summary" class="card" hidden aria-labelledby="summary-heading">
+    <h2 id="summary-heading">How you did</h2>
+    <p class="summary-score" id="summary-score"></p>
+    <div id="summary-detail"></div>
+    <p class="hint" id="summary-note"></p>
+  </section>
+</main>
+
+<div id="live-region" class="visually-hidden" role="status" aria-live="polite"></div>
+
+<footer class="finish-bar">
+  <button type="button" id="finish-button" class="finish-button" disabled>Finish</button>
+</footer>
+
+<script>
+/* ---- SCORM 1.2 wrapper. Degrades silently to standalone preview. -------- */
+const SCORM = (() => {
+  let api = null, initialized = false, finished = false;
+  function findApi(win) {
+    let current = win, attempts = 0;
+    try {
+      while (current && !current.API && current.parent && current.parent !== current && attempts < 500) {
+        attempts += 1; current = current.parent;
+      }
+      if (current && current.API) return current.API;
+      if (win.opener && !win.opener.closed) return findApi(win.opener);
+    } catch (e) { return null; }
+    return null;
+  }
+  function call(method, ...args) {
+    if (!api || typeof api[method] !== "function") return "false";
+    try { return api[method](...args); } catch (e) { return "false"; }
+  }
+  function init() {
+    if (initialized) return true;
+    api = findApi(window);
+    if (!api) return false;
+    initialized = call("LMSInitialize", "") === "true";
+    if (initialized) {
+      const prior = call("LMSGetValue", "cmi.core.lesson_status");
+      if (prior !== "completed" && prior !== "passed") {
+        call("LMSSetValue", "cmi.core.lesson_status", "incomplete");
+      }
+      call("LMSSetValue", "cmi.core.score.min", "0");
+      call("LMSSetValue", "cmi.core.score.max", "100");
+      call("LMSCommit", "");
+    }
+    return initialized;
+  }
+  function setScore(raw) {
+    if (!initialized) return;
+    call("LMSSetValue", "cmi.core.score.raw", String(raw));
+    call("LMSCommit", "");
+  }
+  function finishActivity(score) {
+    if (finished) return;
+    if (initialized) {
+      call("LMSSetValue", "cmi.core.lesson_status", "completed");
+      if (score !== null && score !== undefined) call("LMSSetValue", "cmi.core.score.raw", String(score));
+      call("LMSCommit", "");
+      call("LMSFinish", "");
+    }
+    finished = true;
+  }
+  function unloadSafety() {
+    if (finished || !initialized) return;
+    call("LMSCommit", ""); call("LMSFinish", ""); finished = true;
+  }
+  window.addEventListener("pagehide", unloadSafety);
+  window.addEventListener("beforeunload", unloadSafety);
+  return { init, setScore, finishActivity };
+})();
+SCORM.init();
+
+/* ---- Activity API -------------------------------------------------------
+   The only surface an activity script needs. Handles the Finish button,
+   the live region, the score, and the completion summary, so no activity
+   re-implements them (or gets them subtly wrong).                        */
+const Activity = (() => {
+  const finishBtn = document.getElementById("finish-button");
+  const live = document.getElementById("live-region");
+  const summaryEl = document.getElementById("summary");
+  const scoreEl = document.getElementById("summary-score");
+  const detailEl = document.getElementById("summary-detail");
+  const noteEl = document.getElementById("summary-note");
+  let firstScore = null;   // frozen on first completion so review passes can't inflate it
+  let ready = false;
+
+  function announce(msg) { live.textContent = ""; setTimeout(() => { live.textContent = msg; }, 40); }
+
+  function setReady(on, msg) {
+    ready = !!on;
+    finishBtn.disabled = !ready;
+    if (ready) {
+      finishBtn.classList.add("enabled-pop");
+      setTimeout(() => finishBtn.classList.remove("enabled-pop"), 1400);
+      if (msg) announce(msg);
+    }
+  }
+
+  /* Report the truth: right and missed are arrays of plain strings.
+     Passing neither still renders an honest "you finished" line.        */
+  function summarize({ score = null, right = [], missed = [], note = "" } = {}) {
+    if (firstScore === null && score !== null) firstScore = score;
+    const shown = firstScore === null ? null : firstScore;
+    if (shown !== null) {
+      const total = right.length + missed.length;
+      scoreEl.textContent = total
+        ? `${right.length} of ${total} correct on your first attempt — ${shown}%`
+        : `First-attempt score: ${shown}%`;
+    } else {
+      scoreEl.textContent = "Activity complete.";
+    }
+    detailEl.innerHTML = "";
+    const group = (title, items, cls) => {
+      if (!items.length) return;
+      const wrap = document.createElement("div");
+      wrap.className = "summary-group";
+      const h = document.createElement("h3");
+      h.innerHTML = `<span class="mark ${cls === "ok" ? "ok" : "no"}">${cls === "ok" ? "✓" : "✗"}</span>${title}`;
+      const ul = document.createElement("ul");
+      ul.className = "summary-list";
+      items.forEach(t => { const li = document.createElement("li"); li.textContent = t; ul.appendChild(li); });
+      wrap.appendChild(h); wrap.appendChild(ul); detailEl.appendChild(wrap);
+    };
+    group(`You got these right (${right.length})`, right, "ok");
+    group(`You missed these (${missed.length})`, missed, "no");
+    noteEl.textContent = note || "";
+    summaryEl.hidden = false;
+    summaryEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    if (shown !== null) SCORM.setScore(shown);
+  }
+
+  finishBtn.addEventListener("click", () => {
+    if (!ready) return;
+    SCORM.finishActivity(firstScore);
+    finishBtn.disabled = true;
+    finishBtn.textContent = "Finished ✓";
+    announce("Activity finished and reported as complete.");
+  });
+
+  return { setReady, announce, summarize, get score() { return firstScore; } };
+})();
+
+/* ---- Multi-part coordinator --------------------------------------------
+   For modules that merge two activities into one. Each part reports here
+   instead of calling Activity.setReady / Activity.summarize itself, and only
+   the last part to finish unlocks Finish. Without this, part one would enable
+   the Finish button and a student could submit half an activity.         */
+const Parts = (() => {
+  let expected = 0;
+  const results = new Map();
+  const listeners = [];
+
+  function expect(n) { expected = n; }
+  function isDone(i) { return results.has(i); }
+  function onDone(fn) { listeners.push(fn); }
+
+  function done(index, { score = null, right = [], missed = [], label = "" } = {}) {
+    if (results.has(index)) return;                 // first result stands
+    results.set(index, { score, right, missed, label });
+    listeners.forEach(fn => { try { fn(index); } catch (e) {} });
+    if (results.size < expected) {
+      Activity.announce(`Part ${index} complete. Part ${index + 1} is now available.`);
+      return;
+    }
+    // Merge both parts' results, keeping each item attributed to its part so
+    // the summary says which half a student actually struggled with.
+    // NB: these locals must NOT be named `right` / `missed` — those are already
+    // bound by this function's destructured parameter, and redeclaring them with
+    // const is a SyntaxError that kills the whole inline script silently.
+    const allRight = [], allMissed = [];
+    let weighted = 0, items = 0;
+    [...results.entries()].sort((a, b) => a[0] - b[0]).forEach(([i, r]) => {
+      const tag = r.label ? `${r.label}: ` : `Part ${i}: `;
+      r.right.forEach(t => allRight.push(tag + t));
+      r.missed.forEach(t => allMissed.push(tag + t));
+      const n = r.right.length + r.missed.length;
+      if (r.score !== null && n) { weighted += r.score * n; items += n; }
+      else if (r.score !== null) { weighted += r.score; items += 1; }
+    });
+    const finalScore = items ? Math.round(weighted / items) : null;
+    Activity.setReady(true, "Both parts complete. You can finish the activity.");
+    Activity.summarize({
+      score: finalScore, right: allRight, missed: allMissed,
+      note: "This activity had two parts; the summary above covers both.",
+    });
+  }
+  return { expect, done, isDone, onDone };
+})();
+
+const ITEMS = [
+  { id: "a", text: "No single central agency governs the system as a whole", bin: "us" },
+  { id: "b", text: "Health insurance is commonly obtained through an employer", bin: "us" },
+  { id: "c", text: "Many public and private payers, each with its own rules", bin: "us" },
+  { id: "d", text: "Highest health spending per person among developed nations", bin: "us" },
+  { id: "e", text: "Access to care depends largely on whether a person has insurance", bin: "us" },
+  { id: "f", text: "Delivery is technology-driven and centered on acute, specialist care", bin: "us" },
+  { id: "g", text: "Fear of malpractice lawsuits shapes how physicians practice", bin: "us" },
+  { id: "h", text: "Government mainly fills gaps the private market leaves, such as older adults and low-income people", bin: "us" },
+  { id: "i", text: "Every citizen is guaranteed coverage by law", bin: "other" },
+  { id: "j", text: "Government sets an overall national budget for health care", bin: "other" },
+  { id: "k", text: "One public payer, or tightly regulated sickness funds, covers everyone", bin: "other" },
+  { id: "l", text: "Prices for services and drugs are set or negotiated nationally", bin: "other" }
+];
+const BIN_NAMES = { us: "U.S. health care system", other: "Typical national system elsewhere" };
+const placed = {};            // id -> bin
+const firstTry = {};          // id -> true/false, frozen on first check
+let selected = null, checkedOnce = false, finished = false;
+const pool = document.getElementById("pool");
+const chips = {};
+
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+shuffle(ITEMS.slice()).forEach(it => {
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "chip"; b.draggable = true;
+  b.dataset.id = it.id; b.setAttribute("aria-pressed", "false"); b.setAttribute("role", "listitem");
+  b.innerHTML = `<span class="mk"></span><span>${it.text}</span>`;
+  b.addEventListener("click", () => select(it.id));
+  b.addEventListener("dragstart", e => { if (b.classList.contains("locked")) { e.preventDefault(); return; } e.dataTransfer.setData("text/plain", it.id); select(it.id, true); });
+  chips[it.id] = b; pool.appendChild(b);
+});
+
+function select(id, force) {
+  const chip = chips[id];
+  if (chip.classList.contains("locked")) return;
+  if (selected === id && !force) { chip.setAttribute("aria-pressed", "false"); selected = null; Activity.announce("Selection cleared."); return; }
+  if (selected) chips[selected].setAttribute("aria-pressed", "false");
+  selected = id; chip.setAttribute("aria-pressed", "true");
+  if (!force) Activity.announce("Selected. Now press Place here under a column.");
+}
+
+function place(id, bin) {
+  const chip = chips[id];
+  if (!chip || chip.classList.contains("locked")) return;
+  document.querySelector(`#bin-${bin} .bin-items`).appendChild(chip);
+  placed[id] = bin;
+  chip.setAttribute("aria-pressed", "false"); selected = null;
+  Activity.announce(`Placed in ${BIN_NAMES[bin]}.`);
+  update();
+}
+
+document.querySelectorAll("[data-place]").forEach(btn => btn.addEventListener("click", () => {
+  if (!selected) { Activity.announce("Select a feature first."); return; }
+  place(selected, btn.dataset.place);
+}));
+document.querySelectorAll(".bin").forEach(bin => {
+  bin.addEventListener("dragover", e => { e.preventDefault(); bin.classList.add("drag-over"); });
+  bin.addEventListener("dragleave", () => bin.classList.remove("drag-over"));
+  bin.addEventListener("drop", e => { e.preventDefault(); bin.classList.remove("drag-over"); const id = e.dataTransfer.getData("text/plain"); if (id) place(id, bin.dataset.bin); });
+});
+
+function update() {
+  const n = Object.keys(placed).length;
+  document.getElementById("prog").style.width = (n / ITEMS.length * 100) + "%";
+  document.getElementById("status").textContent = `${n} of ${ITEMS.length} placed.`;
+  document.getElementById("check").disabled = finished || n < ITEMS.length;
+}
+
+document.getElementById("check").addEventListener("click", () => {
+  let wrong = 0;
+  ITEMS.forEach(it => {
+    const ok = placed[it.id] === it.bin;
+    if (!checkedOnce) firstTry[it.id] = ok;
+    const chip = chips[it.id];
+    chip.classList.remove("is-correct", "is-wrong");
+    chip.classList.add(ok ? "is-correct" : "is-wrong");
+    chip.querySelector(".mk").innerHTML = ok ? '<span class="mark ok" aria-hidden="true">✓</span><span class="visually-hidden">Correct:</span>' : '<span class="mark no" aria-hidden="true">✗</span><span class="visually-hidden">Incorrect:</span>';
+    if (ok) { chip.classList.add("locked"); chip.draggable = false; } else wrong++;
+  });
+  checkedOnce = true;
+  const fb = document.getElementById("feedback");
+  if (wrong === 0) {
+    finished = true;
+    fb.textContent = "Every feature is in the right column.";
+    document.getElementById("retry").hidden = true;
+    document.getElementById("check").disabled = true;
+    const right = ITEMS.filter(i => firstTry[i.id]).map(i => `${i.text} → ${BIN_NAMES[i.bin]}`);
+    const missed = ITEMS.filter(i => !firstTry[i.id]).map(i => `${i.text} → belongs in ${BIN_NAMES[i.bin]}`);
+    Activity.summarize({ score: Math.round(right.length / ITEMS.length * 100), right, missed,
+      note: "The U.S. stands out for fragmented, insurance-based access and high cost; most other developed nations guarantee coverage and control spending centrally." });
+    Activity.setReady(true, "All features sorted. You can finish the activity.");
+  } else {
+    fb.textContent = `${wrong} feature${wrong > 1 ? "s are" : " is"} in the wrong column (marked ✗). Move ${wrong > 1 ? "them" : "it"} back and try again.`;
+    document.getElementById("retry").hidden = false;
+    Activity.announce(fb.textContent);
+  }
+});
+
+document.getElementById("retry").addEventListener("click", () => {
+  ITEMS.forEach(it => {
+    const chip = chips[it.id];
+    if (!chip.classList.contains("locked")) {
+      chip.classList.remove("is-wrong"); chip.querySelector(".mk").innerHTML = "";
+      pool.appendChild(chip); delete placed[it.id];
+    }
+  });
+  document.getElementById("retry").hidden = true;
+  document.getElementById("feedback").textContent = "";
+  update();
+});
+update();
+</script>
+</body>
+</html>

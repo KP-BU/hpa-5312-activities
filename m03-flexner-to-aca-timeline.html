@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>From Flexner to the ACA — HPA 5312 Module 3</title>
+<style>
+  :root {
+    --green: #154734; --gold: #FFB81C;
+    --ink: #12352a; --muted: #5f7068;
+    --soft-green: #e7f1ed; --soft-gold: #fff4d8; --line: #cfddd7;
+    --danger: #b42318; --danger-soft: #ffe5e2;
+    --success: #1f7a46; --success-soft: #e2f5e8;
+    --shadow: 0 22px 60px rgba(21, 71, 52, 0.16);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Proxima Nova", "Helvetica Neue", Arial, sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(circle at top left, rgba(255,184,28,0.28), transparent 30rem),
+      linear-gradient(135deg, #f7fbf8 0%, #eef7f3 100%);
+    min-height: 100vh;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* ---- Layout ------------------------------------------------------------
+     Phone-first single column. At the 1366x1366 LMS frame the container
+     widens and vertical rhythm tightens, so activities fit without the
+     retrofitted !important layer the previous course needed.              */
+  main {
+    width: min(100%, 46rem);
+    margin: 0 auto;
+    padding: clamp(1rem, 3vw, 1.75rem) clamp(0.85rem, 3vw, 1.5rem) 1.25rem;
+  }
+  @media (min-width: 1100px) and (min-height: 900px) {
+    main { width: min(100%, 1180px); padding-top: 1rem; padding-bottom: 1rem; }
+    h1 { font-size: 1.7rem !important; margin-bottom: 0.25rem !important; }
+    .card { padding: 0.85rem 1.1rem; margin-bottom: 0.7rem; }
+    .lede { margin-bottom: 0.2rem; }
+    /* Opt-in helpers: an activity adds these to its own containers. */
+    .fit-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; align-items: start; }
+    .fit-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; align-items: start; }
+    .fit-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.55rem; align-items: start; }
+    .fit-2 > *, .fit-3 > *, .fit-4 > * { margin-bottom: 0 !important; }
+    .fit-span { grid-column: 1 / -1; }
+  }
+
+  /* Course banner. Decorative — alt="" and role="presentation" keep it out of
+     the accessibility tree, since it carries no information a student needs.
+     It scales with the container at its natural 20:3 ratio, so it costs about
+     177px of height in the wide frame and only ~56px on a phone. */
+  .course-banner {
+    display: block; width: 100%; height: auto;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    margin-bottom: clamp(0.7rem, 2vw, 1rem);
+  }
+  @media (min-width: 1100px) and (min-height: 900px) {
+    .course-banner { margin-bottom: 0.55rem; }
+  }
+  @media print { .course-banner { display: none; } }
+
+  .card {
+    background: rgba(255,255,255,0.94);
+    border: 2px solid rgba(21,71,52,0.1);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    padding: clamp(1rem, 3vw, 1.5rem);
+    margin-bottom: clamp(0.8rem, 2.2vw, 1.15rem);
+  }
+  .eyebrow {
+    display: inline-block; background: var(--soft-gold); color: var(--green);
+    font-size: 0.78rem; font-weight: 800; letter-spacing: 0.08em;
+    text-transform: uppercase; border-radius: 999px;
+    padding: 0.3rem 0.85rem; margin: 0 0 0.65rem;
+  }
+  h1 { color: var(--green); font-size: clamp(1.35rem, 4.5vw, 1.85rem); line-height: 1.2; margin: 0 0 0.5rem; }
+  h2 { color: var(--green); font-size: 1.1rem; margin: 0 0 0.5rem; }
+  h3 { color: var(--green); font-size: 0.98rem; margin: 0 0 0.35rem; }
+  p { line-height: 1.55; margin: 0 0 0.6rem; }
+  .lede { color: var(--muted); font-weight: 600; }
+  .hint { color: var(--muted); font-size: 0.88rem; }
+
+  /* ---- Controls ---------------------------------------------------------- */
+  .btn {
+    min-height: 2.9rem; padding: 0 1.1rem;
+    border: 2px solid var(--green); border-radius: 8px;
+    background: #fff; color: var(--green);
+    font: inherit; font-weight: 800; font-size: 0.95rem; cursor: pointer;
+    transition: background 150ms ease, color 150ms ease, opacity 150ms ease;
+  }
+  .btn:not(:disabled):hover, .btn:not(:disabled):focus-visible { background: var(--green); color: #fff; outline: none; }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn.primary { background: var(--gold); border-color: var(--gold); }
+  .btn.primary:not(:disabled):hover, .btn.primary:not(:disabled):focus-visible { background: var(--green); border-color: var(--green); color: #fff; }
+  .controls { display: flex; flex-wrap: wrap; gap: 0.55rem; margin-top: 0.7rem; }
+  .controls .btn { flex: 1 1 10rem; }
+
+  select, input[type="text"], textarea {
+    font: inherit; color: var(--ink); background: #fff;
+    border: 2px solid var(--line); border-radius: 6px;
+    padding: 0.45rem 0.55rem; min-height: 2.6rem;
+  }
+  select:focus-visible, input:focus-visible, textarea:focus-visible,
+  button:focus-visible, [tabindex]:focus-visible, a:focus-visible {
+    outline: 3px solid var(--gold); outline-offset: 2px;
+  }
+
+  /* State signalling always pairs colour with a mark or text (WCAG 1.4.1). */
+  .is-correct { border-color: var(--success) !important; background: var(--success-soft); }
+  .is-wrong   { border-color: var(--danger) !important;  background: var(--danger-soft); }
+  .mark { font-weight: 900; margin-right: 0.3rem; }
+  .mark.ok { color: var(--success); }
+  .mark.no { color: var(--danger); }
+
+  .progress-track { height: 0.55rem; background: var(--soft-green); border-radius: 999px; overflow: hidden; margin-top: 0.6rem; }
+  .progress-fill { height: 100%; width: 0%; background: var(--green); transition: width 220ms ease; }
+
+  /* ---- Completion summary (must report what actually happened) ---------- */
+  #summary[hidden] { display: none; }
+  #summary { border-color: var(--success); }
+  #summary h2 { display: flex; align-items: center; gap: 0.4rem; }
+  .summary-score { font-size: 1.05rem; font-weight: 900; color: var(--green); margin: 0 0 0.6rem; }
+  .summary-list { margin: 0 0 0.6rem; padding-left: 1.1rem; }
+  .summary-list li { margin-bottom: 0.25rem; line-height: 1.45; }
+  .summary-group { margin-bottom: 0.7rem; }
+  .summary-group h3 { margin-bottom: 0.2rem; }
+
+  /* ---- Two-part activities ---------------------------------------------
+     Some modules combine two activities into one sequential experience.
+     Only one part is on screen at a time, so a merged activity costs no more
+     height than the taller of its two halves.                             */
+  .part-steps { display: flex; gap: 0.5rem; margin-bottom: 0.8rem; flex-wrap: wrap; }
+  .part-step {
+    flex: 1 1 12rem; text-align: left;
+    border: 2px solid var(--line); border-radius: 8px;
+    background: rgba(255,255,255,0.9); color: var(--muted);
+    padding: 0.5rem 0.75rem; font: inherit; font-weight: 700; font-size: 0.9rem;
+    cursor: pointer; transition: border-color 150ms ease, color 150ms ease;
+  }
+  .part-step .part-n { display: block; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .part-step[aria-current="true"] { border-color: var(--green); color: var(--green); background: var(--soft-green); }
+  .part-step[data-state="done"] { border-color: var(--success); color: var(--success); }
+  .part-step[data-state="done"] .part-n::after { content: " ✓"; }
+  .part-step[data-state="locked"] { opacity: 0.55; cursor: not-allowed; }
+  .part-step[data-state="locked"] .part-n::after { content: " (locked)"; }
+  .part-panel[hidden] { display: none; }
+
+  .visually-hidden {
+    position: absolute !important; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+
+  /* ---- Finish bar -------------------------------------------------------- */
+  .finish-bar {
+    position: sticky; bottom: 0; z-index: 30;
+    padding: 0.7rem 1rem calc(0.7rem + env(safe-area-inset-bottom));
+    background: rgba(247, 251, 248, 0.92);
+    backdrop-filter: blur(6px); border-top: 2px solid var(--line);
+  }
+  .finish-button {
+    display: block; width: min(100%, 22rem); margin: 0 auto; min-height: 3rem;
+    border: 2px solid var(--gold); border-radius: 8px;
+    background: var(--gold); color: var(--green);
+    font: inherit; font-weight: 900; font-size: 1.05rem; cursor: pointer;
+    transition: background 160ms ease, color 160ms ease, opacity 160ms ease;
+  }
+  .finish-button:disabled { opacity: 0.45; cursor: not-allowed; }
+  .finish-button:not(:disabled):hover, .finish-button:not(:disabled):focus-visible {
+    background: var(--green); border-color: var(--green); color: #ffffff; outline: none;
+  }
+  @keyframes finish-pop { 0%{transform:scale(1)} 50%{transform:scale(1.04)} 100%{transform:scale(1)} }
+  .finish-button.enabled-pop { animation: finish-pop 600ms ease 2; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+  @media (max-width: 520px) {
+    .controls { flex-direction: column; }
+    .controls .btn { flex: none; width: 100%; }
+    select, input[type="text"] { width: 100%; }
+  }
+
+.tl { list-style: none; margin: 0; padding: 0 0 0 1.1rem; border-left: 4px solid var(--soft-green); }
+.tl li { position: relative; margin-bottom: 0.45rem; }
+.tl li::before { content: ""; position: absolute; left: -1.55rem; top: 0.95rem; width: 0.8rem; height: 0.8rem; border-radius: 50%; background: var(--line); border: 2px solid #fff; }
+.tl li.seen::before { background: var(--green); }
+.ev-btn { width: 100%; text-align: left; display: flex; gap: 0.6rem; align-items: baseline; border: 2px solid var(--line); border-radius: 8px; background: #fff; font: inherit; color: var(--ink); padding: 0.55rem 0.75rem; cursor: pointer; }
+.ev-btn[aria-expanded="true"] { border-color: var(--green); background: var(--soft-green); }
+.ev-year { font-weight: 900; color: var(--green); min-width: 3.2rem; }
+.ev-title { font-weight: 700; flex: 1; }
+.ev-seen { font-size: 0.8rem; color: var(--success); font-weight: 800; }
+.ev-body { padding: 0.55rem 0.75rem 0.2rem; }
+.ev-body[hidden] { display: none; }
+.ev-body .why { color: var(--muted); font-size: 0.92rem; }
+.q { margin-bottom: 0.9rem; }
+.q fieldset { border: 0; padding: 0; margin: 0; }
+.q legend { font-weight: 700; margin-bottom: 0.4rem; }
+.opt { display: flex; gap: 0.5rem; align-items: flex-start; padding: 0.4rem 0.55rem; border: 2px solid var(--line); border-radius: 6px; margin-bottom: 0.35rem; background: #fff; cursor: pointer; }
+.opt input { margin-top: 0.25rem; }
+.q-fb { font-weight: 700; }
+#check-card[hidden] { display: none; }
+</style>
+</head>
+<body>
+<main>
+  <header class="card">
+    <span class="eyebrow">Module 3 · Evolution of Health Services in the U.S.</span>
+    <h1>From Flexner to the ACA</h1>
+    <p class="lede">Open every event on the timeline to see how U.S. health care took its current shape, then answer the four questions in the knowledge check.</p>
+  </header>
+
+<section class="card" aria-labelledby="tl-h">
+  <h2 id="tl-h">Timeline</h2>
+  <p class="hint" id="seen-count">0 of 13 events opened.</p>
+  <ol class="tl" id="tl"></ol>
+  <div class="progress-track" aria-hidden="true"><div class="progress-fill" id="prog"></div></div>
+</section>
+<section class="card" id="check-card" hidden aria-labelledby="chk-h">
+  <h2 id="chk-h">Knowledge check</h2>
+  <form id="quiz"></form>
+  <div class="controls"><button type="button" class="btn primary" id="check" disabled>Check my answers</button></div>
+  <p class="hint" id="feedback" aria-live="polite"></p>
+</section>
+
+  <section id="summary" class="card" hidden aria-labelledby="summary-heading">
+    <h2 id="summary-heading">How you did</h2>
+    <p class="summary-score" id="summary-score"></p>
+    <div id="summary-detail"></div>
+    <p class="hint" id="summary-note"></p>
+  </section>
+</main>
+
+<div id="live-region" class="visually-hidden" role="status" aria-live="polite"></div>
+
+<footer class="finish-bar">
+  <button type="button" id="finish-button" class="finish-button" disabled>Finish</button>
+</footer>
+
+<script>
+/* ---- SCORM 1.2 wrapper. Degrades silently to standalone preview. -------- */
+const SCORM = (() => {
+  let api = null, initialized = false, finished = false;
+  function findApi(win) {
+    let current = win, attempts = 0;
+    try {
+      while (current && !current.API && current.parent && current.parent !== current && attempts < 500) {
+        attempts += 1; current = current.parent;
+      }
+      if (current && current.API) return current.API;
+      if (win.opener && !win.opener.closed) return findApi(win.opener);
+    } catch (e) { return null; }
+    return null;
+  }
+  function call(method, ...args) {
+    if (!api || typeof api[method] !== "function") return "false";
+    try { return api[method](...args); } catch (e) { return "false"; }
+  }
+  function init() {
+    if (initialized) return true;
+    api = findApi(window);
+    if (!api) return false;
+    initialized = call("LMSInitialize", "") === "true";
+    if (initialized) {
+      const prior = call("LMSGetValue", "cmi.core.lesson_status");
+      if (prior !== "completed" && prior !== "passed") {
+        call("LMSSetValue", "cmi.core.lesson_status", "incomplete");
+      }
+      call("LMSSetValue", "cmi.core.score.min", "0");
+      call("LMSSetValue", "cmi.core.score.max", "100");
+      call("LMSCommit", "");
+    }
+    return initialized;
+  }
+  function setScore(raw) {
+    if (!initialized) return;
+    call("LMSSetValue", "cmi.core.score.raw", String(raw));
+    call("LMSCommit", "");
+  }
+  function finishActivity(score) {
+    if (finished) return;
+    if (initialized) {
+      call("LMSSetValue", "cmi.core.lesson_status", "completed");
+      if (score !== null && score !== undefined) call("LMSSetValue", "cmi.core.score.raw", String(score));
+      call("LMSCommit", "");
+      call("LMSFinish", "");
+    }
+    finished = true;
+  }
+  function unloadSafety() {
+    if (finished || !initialized) return;
+    call("LMSCommit", ""); call("LMSFinish", ""); finished = true;
+  }
+  window.addEventListener("pagehide", unloadSafety);
+  window.addEventListener("beforeunload", unloadSafety);
+  return { init, setScore, finishActivity };
+})();
+SCORM.init();
+
+/* ---- Activity API -------------------------------------------------------
+   The only surface an activity script needs. Handles the Finish button,
+   the live region, the score, and the completion summary, so no activity
+   re-implements them (or gets them subtly wrong).                        */
+const Activity = (() => {
+  const finishBtn = document.getElementById("finish-button");
+  const live = document.getElementById("live-region");
+  const summaryEl = document.getElementById("summary");
+  const scoreEl = document.getElementById("summary-score");
+  const detailEl = document.getElementById("summary-detail");
+  const noteEl = document.getElementById("summary-note");
+  let firstScore = null;   // frozen on first completion so review passes can't inflate it
+  let ready = false;
+
+  function announce(msg) { live.textContent = ""; setTimeout(() => { live.textContent = msg; }, 40); }
+
+  function setReady(on, msg) {
+    ready = !!on;
+    finishBtn.disabled = !ready;
+    if (ready) {
+      finishBtn.classList.add("enabled-pop");
+      setTimeout(() => finishBtn.classList.remove("enabled-pop"), 1400);
+      if (msg) announce(msg);
+    }
+  }
+
+  /* Report the truth: right and missed are arrays of plain strings.
+     Passing neither still renders an honest "you finished" line.        */
+  function summarize({ score = null, right = [], missed = [], note = "" } = {}) {
+    if (firstScore === null && score !== null) firstScore = score;
+    const shown = firstScore === null ? null : firstScore;
+    if (shown !== null) {
+      const total = right.length + missed.length;
+      scoreEl.textContent = total
+        ? `${right.length} of ${total} correct on your first attempt — ${shown}%`
+        : `First-attempt score: ${shown}%`;
+    } else {
+      scoreEl.textContent = "Activity complete.";
+    }
+    detailEl.innerHTML = "";
+    const group = (title, items, cls) => {
+      if (!items.length) return;
+      const wrap = document.createElement("div");
+      wrap.className = "summary-group";
+      const h = document.createElement("h3");
+      h.innerHTML = `<span class="mark ${cls === "ok" ? "ok" : "no"}">${cls === "ok" ? "✓" : "✗"}</span>${title}`;
+      const ul = document.createElement("ul");
+      ul.className = "summary-list";
+      items.forEach(t => { const li = document.createElement("li"); li.textContent = t; ul.appendChild(li); });
+      wrap.appendChild(h); wrap.appendChild(ul); detailEl.appendChild(wrap);
+    };
+    group(`You got these right (${right.length})`, right, "ok");
+    group(`You missed these (${missed.length})`, missed, "no");
+    noteEl.textContent = note || "";
+    summaryEl.hidden = false;
+    summaryEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    if (shown !== null) SCORM.setScore(shown);
+  }
+
+  finishBtn.addEventListener("click", () => {
+    if (!ready) return;
+    SCORM.finishActivity(firstScore);
+    finishBtn.disabled = true;
+    finishBtn.textContent = "Finished ✓";
+    announce("Activity finished and reported as complete.");
+  });
+
+  return { setReady, announce, summarize, get score() { return firstScore; } };
+})();
+
+/* ---- Multi-part coordinator --------------------------------------------
+   For modules that merge two activities into one. Each part reports here
+   instead of calling Activity.setReady / Activity.summarize itself, and only
+   the last part to finish unlocks Finish. Without this, part one would enable
+   the Finish button and a student could submit half an activity.         */
+const Parts = (() => {
+  let expected = 0;
+  const results = new Map();
+  const listeners = [];
+
+  function expect(n) { expected = n; }
+  function isDone(i) { return results.has(i); }
+  function onDone(fn) { listeners.push(fn); }
+
+  function done(index, { score = null, right = [], missed = [], label = "" } = {}) {
+    if (results.has(index)) return;                 // first result stands
+    results.set(index, { score, right, missed, label });
+    listeners.forEach(fn => { try { fn(index); } catch (e) {} });
+    if (results.size < expected) {
+      Activity.announce(`Part ${index} complete. Part ${index + 1} is now available.`);
+      return;
+    }
+    // Merge both parts' results, keeping each item attributed to its part so
+    // the summary says which half a student actually struggled with.
+    // NB: these locals must NOT be named `right` / `missed` — those are already
+    // bound by this function's destructured parameter, and redeclaring them with
+    // const is a SyntaxError that kills the whole inline script silently.
+    const allRight = [], allMissed = [];
+    let weighted = 0, items = 0;
+    [...results.entries()].sort((a, b) => a[0] - b[0]).forEach(([i, r]) => {
+      const tag = r.label ? `${r.label}: ` : `Part ${i}: `;
+      r.right.forEach(t => allRight.push(tag + t));
+      r.missed.forEach(t => allMissed.push(tag + t));
+      const n = r.right.length + r.missed.length;
+      if (r.score !== null && n) { weighted += r.score * n; items += n; }
+      else if (r.score !== null) { weighted += r.score; items += 1; }
+    });
+    const finalScore = items ? Math.round(weighted / items) : null;
+    Activity.setReady(true, "Both parts complete. You can finish the activity.");
+    Activity.summarize({
+      score: finalScore, right: allRight, missed: allMissed,
+      note: "This activity had two parts; the summary above covers both.",
+    });
+  }
+  return { expect, done, isDone, onDone };
+})();
+
+const EVENTS = [
+  { y: "1847", t: "American Medical Association founded", d: "Physicians organize nationally to set standards for medical education and practice.", w: "Begins the medical profession's rise as an organized, self-regulating power in U.S. health care." },
+  { y: "1910", t: "The Flexner Report", d: "Abraham Flexner's review of North American medical schools leads to the closure of many weak schools and a science-based, university model of training.", w: "Professionalizes medicine and links it to hospitals, research, and specialization." },
+  { y: "1929", t: "Baylor University Hospital's prepaid plan", d: "Dallas schoolteachers pay a small monthly amount for up to 21 days of hospital care at Baylor University Hospital. The plan becomes the model for Blue Cross.", w: "Starts private, prepaid hospital insurance in the U.S." },
+  { y: "1943", t: "Health benefits exempted from wartime wage controls", d: "During World War II, the War Labor Board rules that fringe benefits such as health insurance do not count as wages, so employers compete for workers by offering coverage.", w: "Explains why most working-age Americans still get insurance through an employer." },
+  { y: "1946", t: "Hill-Burton Act", d: "Federal grants and loans fund a wave of hospital construction across the country.", w: "Expands hospital capacity and reinforces the system's focus on institutional, acute care." },
+  { y: "1965", t: "Medicare and Medicaid created", d: "Amendments to the Social Security Act create Medicare for people 65 and older and Medicaid for certain low-income groups, financed jointly by federal and state governments.", w: "Government becomes a major payer, filling the gaps the private market left." },
+  { y: "1973", t: "HMO Act", d: "Federal support and requirements encourage employers to offer health maintenance organizations.", w: "Lays groundwork for managed care as a tool to control costs." },
+  { y: "1983", t: "Medicare prospective payment (DRGs)", d: "Medicare stops paying hospitals their costs and instead pays a fixed amount per inpatient stay based on diagnosis-related groups.", w: "Shifts financial risk to hospitals and shortens hospital stays." },
+  { y: "1997", t: "Children's Health Insurance Program (CHIP)", d: "The Balanced Budget Act creates CHIP to cover children in families that earn too much for Medicaid but cannot afford private coverage.", w: "Extends public coverage to millions of children." },
+  { y: "2003", t: "Medicare Part D created", d: "The Medicare Modernization Act adds an outpatient prescription drug benefit, which begins in 2006 through private plans.", w: "Closes one of Medicare's largest coverage gaps." },
+  { y: "2010", t: "Affordable Care Act signed", d: "The ACA bans coverage denials for pre-existing conditions, requires most people to have coverage, creates insurance marketplaces with subsidies, and expands Medicaid.", w: "The largest coverage expansion since 1965." },
+  { y: "2012", t: "NFIB v. Sebelius", d: "The Supreme Court upholds the ACA's individual mandate as a tax but rules that states may choose whether to expand Medicaid.", w: "Medicaid expansion becomes a state-by-state decision, and coverage gaps persist in non-expansion states." },
+  { y: "2022", t: "Inflation Reduction Act", d: "Medicare gains authority to negotiate prices for some high-cost drugs, and insulin costs for Medicare enrollees are capped at $35 a month. (The individual mandate penalty had already been reduced to $0 starting in 2019.)", w: "Signals the next direction in policy: controlling prices, especially for drugs." }
+];
+const QUIZ = [
+  { q: "Why do most working-age Americans get health insurance through an employer?", o: ["The ACA requires every employer to provide coverage", "World War II wage controls led employers to compete for workers with health benefits", "Medicare only covers people who work for large companies", "The Flexner Report recommended it"], a: 1 },
+  { q: "Which event made Medicaid expansion optional for states?", o: ["The 1965 Social Security Amendments", "The Balanced Budget Act of 1997", "The Supreme Court's 2012 NFIB v. Sebelius decision", "The Inflation Reduction Act of 2022"], a: 2 },
+  { q: "What did Medicare's 1983 switch to diagnosis-related groups (DRGs) change?", o: ["Hospitals were paid a fixed amount per stay instead of their costs", "Medicare began covering prescription drugs", "Children became eligible for Medicare", "Physicians were paid a salary by the government"], a: 0 },
+  { q: "Which recent change is the best evidence that policy is moving toward controlling prices?", o: ["The HMO Act of 1973", "The Hill-Burton Act of 1946", "Medicare drug price negotiation under the 2022 Inflation Reduction Act", "The founding of the AMA in 1847"], a: 2 }
+];
+const seen = new Set();
+const tl = document.getElementById("tl");
+EVENTS.forEach((e, i) => {
+  const li = document.createElement("li");
+  li.innerHTML = `<button type="button" class="ev-btn" aria-expanded="false" aria-controls="ev-${i}"><span class="ev-year">${e.y}</span><span class="ev-title">${e.t}</span><span class="ev-seen"></span></button>
+  <div class="ev-body" id="ev-${i}" hidden><p>${e.d}</p><p class="why"><strong>Why it matters:</strong> ${e.w}</p></div>`;
+  const btn = li.querySelector("button"), body = li.querySelector(".ev-body");
+  btn.addEventListener("click", () => {
+    const open = btn.getAttribute("aria-expanded") === "true";
+    btn.setAttribute("aria-expanded", String(!open)); body.hidden = open;
+    if (!open && !seen.has(i)) { seen.add(i); li.classList.add("seen"); btn.querySelector(".ev-seen").textContent = "✓ opened"; updateSeen(); }
+  });
+  tl.appendChild(li);
+});
+function updateSeen() {
+  document.getElementById("seen-count").textContent = `${seen.size} of ${EVENTS.length} events opened.`;
+  document.getElementById("prog").style.width = (seen.size / EVENTS.length * 100) + "%";
+  if (seen.size === EVENTS.length && document.getElementById("check-card").hidden) {
+    document.getElementById("check-card").hidden = false;
+    Activity.announce("All events opened. The knowledge check is now available below the timeline.");
+  }
+}
+const quiz = document.getElementById("quiz");
+QUIZ.forEach((item, qi) => {
+  const div = document.createElement("div"); div.className = "q";
+  div.innerHTML = `<fieldset><legend>${qi + 1}. ${item.q}</legend>${item.o.map((o, oi) => `<label class="opt"><input type="radio" name="q${qi}" value="${oi}"><span>${o}</span></label>`).join("")}</fieldset><p class="q-fb" id="qfb${qi}"></p>`;
+  quiz.appendChild(div);
+});
+const firstTry = Array(QUIZ.length).fill(null);
+let done = false;
+quiz.addEventListener("change", () => {
+  const all = QUIZ.every((_, qi) => quiz.querySelector(`input[name=q${qi}]:checked`));
+  document.getElementById("check").disabled = done || !all;
+});
+document.getElementById("check").addEventListener("click", () => {
+  let wrong = 0;
+  QUIZ.forEach((item, qi) => {
+    const v = Number(quiz.querySelector(`input[name=q${qi}]:checked`).value);
+    const ok = v === item.a;
+    if (firstTry[qi] === null) firstTry[qi] = ok;
+    const fb = document.getElementById(`qfb${qi}`);
+    fb.innerHTML = ok ? '<span class="mark ok">✓</span>Correct.' : '<span class="mark no">✗</span>Not quite. Revisit the timeline and try again.';
+    if (ok) quiz.querySelectorAll(`input[name=q${qi}]`).forEach(r => r.disabled = true); else wrong++;
+  });
+  const fb = document.getElementById("feedback");
+  if (!wrong) {
+    done = true; document.getElementById("check").disabled = true;
+    fb.textContent = "All four answers are correct.";
+    const right = [], missed = [];
+    QUIZ.forEach((item, qi) => (firstTry[qi] ? right : missed).push(`Q${qi + 1}: ${item.q} (${item.o[item.a]})`));
+    Activity.summarize({ score: Math.round(right.length / QUIZ.length * 100), right, missed,
+      note: "You opened all 13 timeline events. The score reflects your first attempt at the knowledge check." });
+    Activity.setReady(true, "Timeline and knowledge check complete. You can finish the activity.");
+  } else {
+    fb.textContent = `${wrong} answer${wrong > 1 ? "s need" : " needs"} another look (marked ✗).`;
+    Activity.announce(fb.textContent);
+  }
+});
+</script>
+</body>
+</html>
