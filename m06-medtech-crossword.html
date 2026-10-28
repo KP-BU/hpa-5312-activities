@@ -516,5 +516,7 @@ document.getElementById("check").addEventListener("click", () => {
 Object.values(cells).forEach(c => { const ei = c.entries[0]; c.input.setAttribute("aria-label", `${label(ei)}, letter ${cellsOf(ei).indexOf(c) + 1} of ${XW.entries[ei].answer.length}`); });
 setActive(0); update();
 </script>
+<div id="frv-activity" data-id="m06"></div>
+<script src="review.js"></script>
 </body>
 </html>
