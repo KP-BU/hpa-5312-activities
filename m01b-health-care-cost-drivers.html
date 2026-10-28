@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What Drives Health Care Cost Growth?</title>
+<style>
+:root{--g:#154734;--gd:#0A2118;--a:#FFB81C;--ink:#14201A;--mut:#3D4A43;--bd:#5B6B63;--sf:#F3F6F4;--ok:#E4F1EA;--er:#8A1111;--erb:#FDECEC}
+*{box-sizing:border-box}
+body{margin:0;font:1.0625rem/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:#fff}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;color:var(--g);line-height:1.2;margin:0 0 .5rem}
+h1{font-size:clamp(1.5rem,4vw,2.2rem)}h2{font-size:clamp(1.35rem,3vw,1.8rem)}h3{font-size:1.15rem}
+p{margin:.4rem 0 1rem;max-width:68ch}
+.skip{position:absolute;left:-999px}.skip:focus{left:1rem;top:1rem;background:#fff;padding:.5rem;z-index:9}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+header{background:var(--sf);border-bottom:6px solid var(--a);padding:1rem clamp(1rem,4vw,3rem)}
+.top{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;flex-wrap:wrap}
+#steps{display:flex;gap:.5rem;list-style:none;margin:.75rem 0 .5rem;padding:0;flex-wrap:wrap}
+#steps li{padding:.3rem .8rem;border:2px solid var(--bd);border-radius:2rem;color:var(--mut);background:#fff;font-weight:600;font-size:.95rem}
+#steps li[aria-current]{background:var(--g);border-color:var(--g);color:#fff}
+#steps li.done{background:var(--ok);border-color:var(--g);color:var(--gd)}
+.bar{height:10px;background:#fff;border:2px solid var(--bd);border-radius:6px;overflow:hidden}
+#fill{height:100%;width:0;background:var(--g);transition:width .5s ease}
+main{max-width:980px;margin:0 auto;padding:1.5rem clamp(1rem,4vw,2rem) 4rem}
+main:focus,h2:focus{outline:none}
+section[hidden],[hidden]{display:none!important}
+section{animation:in .35s ease}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+button{font:inherit;font-weight:700;min-height:48px;min-width:48px;padding:.6rem 1.3rem;border-radius:8px;border:2px solid var(--g);background:var(--g);color:#fff;cursor:pointer;transition:background .15s,transform .15s}
+button:hover:not(:disabled){background:var(--gd);transform:translateY(-1px)}
+button.sec{background:#fff;color:var(--g)}button.sec:hover:not(:disabled){background:var(--ok)}
+button.acc{background:var(--a);border-color:var(--gd);color:var(--gd)}button.acc:hover:not(:disabled){background:#FFC94D}
+button:disabled{background:#E3E6E4;border:2px dashed var(--bd);color:#3A3F3C;cursor:not-allowed}
+:focus-visible{outline:3px solid var(--gd);outline-offset:2px;box-shadow:0 0 0 2px #fff}
+.row{display:flex;gap:.75rem;flex-wrap:wrap;align-items:center;margin:1rem 0}
+.nav{display:flex;justify-content:space-between;gap:.75rem;margin-top:2rem;flex-wrap:wrap}
+input[type=text],textarea{font:inherit;width:100%;padding:.6rem .8rem;border:2px solid var(--bd);border-radius:8px;color:var(--ink)}
+input[type=text]:hover,textarea:hover{border-color:var(--g)}
+[aria-invalid=true]{border-color:var(--er)!important;background:var(--erb)}
+.err{color:var(--er);font-weight:600;margin:.4rem 0}
+.timer{display:flex;align-items:center;gap:1rem;margin:1rem 0}
+.ring{position:relative;width:92px;height:92px;flex:none}.ring svg{transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:9}.ring .bg{stroke:var(--sf)}.ring .fg{stroke:var(--g);transition:stroke-dashoffset 1s linear}
+.ring.low .fg{stroke:var(--er)}
+#clock{position:absolute;inset:0;display:grid;place-items:center;font-weight:800;font-size:1.3rem;color:var(--gd)}
+ul.items{list-style:none;padding:0;margin:.75rem 0;display:flex;flex-wrap:wrap;gap:.5rem}
+ul.items li{display:flex;align-items:center;gap:.25rem;background:var(--ok);border:2px solid var(--g);border-radius:2rem;padding:.1rem .1rem .1rem .9rem;animation:in .25s ease}
+ul.items button{min-height:44px;padding:0 .7rem;background:transparent;color:var(--gd);border-color:transparent;border-radius:2rem}
+ul.items button:hover:not(:disabled){background:#fff;border-color:var(--g)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:.75rem;border:0;padding:0;margin:1rem 0}
+legend{font-weight:700;padding:0;margin-bottom:.5rem;color:var(--gd)}
+.card{display:flex;gap:.75rem;align-items:flex-start;padding:.8rem 1rem;border:2px solid var(--bd);border-left:8px solid var(--bd);border-radius:10px;background:#fff;cursor:pointer;transition:background .15s,border-color .15s,transform .15s;min-height:56px}
+.card:hover{background:var(--sf);border-color:var(--g);transform:translateY(-1px)}
+.card:focus-within{outline:3px solid var(--gd);outline-offset:2px;box-shadow:0 0 0 2px #fff}
+.card input{width:24px;height:24px;margin:2px 0 0;flex:none;accent-color:var(--g)}
+.card:has(input:checked){background:var(--ok);border-color:var(--g);border-left-color:var(--a)}
+.card .st{display:block;font-size:.9rem;color:var(--mut);font-weight:600}
+.card.locked{cursor:default;transform:none}
+.reveal .card{animation:pop .45s ease both;animation-delay:calc(var(--i)*60ms)}
+@keyframes pop{from{opacity:0;transform:scale(.94) translateY(10px)}to{opacity:1;transform:none}}
+.tally{background:var(--a);color:var(--gd);border:2px solid var(--gd);border-radius:12px;padding:.8rem 1.2rem;font-weight:700;display:inline-block}
+.tag{display:inline-block;font-weight:700;font-size:.9rem;padding:.05rem .6rem;border-radius:1rem;background:var(--a);color:var(--gd);border:1px solid var(--gd)}
+blockquote{margin:1rem 0;padding:1rem 1.25rem;background:var(--sf);border-left:8px solid var(--a);font-family:Georgia,serif;font-size:1.2rem;color:var(--gd)}
+.two{display:grid;gap:1.5rem;grid-template-columns:1fr}
+@media(min-width:800px){.two{grid-template-columns:1fr 2fr}}
+.panel{background:var(--sf);border-radius:12px;padding:1rem 1.25rem;margin:1rem 0}
+table{border-collapse:collapse;width:100%;margin:1rem 0}th,td{border:2px solid var(--bd);padding:.5rem .75rem;text-align:left}caption{text-align:left;font-weight:700;color:var(--gd);padding-bottom:.4rem}
+.score{font-family:Georgia,serif;font-size:4rem;font-weight:700;color:var(--g);line-height:1}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+<header>
+ <div class="top"><div><h1>What drives health care costs up?</h1><p style="margin:0">Three short activities: recall, prioritize, reflect.</p></div>
+ <button type="button" id="save" class="sec">Save progress</button></div>
+ <ol id="steps" aria-label="Progress"></ol>
+ <div class="bar" aria-hidden="true"><div id="fill"></div></div>
+</header>
+<main id="main" tabindex="-1">
+
+<section id="s1" aria-labelledby="h1a">
+ <h2 id="h1a" tabindex="-1">Activity 1: List the drivers</h2>
+ <div id="ready">
+  <p>How many reasons can you name for why U.S. health care spending keeps growing? You will have two minutes. Short phrases are fine. Spelling does not matter.</p>
+  <p>The clock is a pacing tool. You can add a minute at any time.</p>
+  <button type="button" id="start" class="acc">Start the 2-minute clock</button>
+ </div>
+ <div id="run" hidden>
+  <div class="timer"><div class="ring"><svg width="92" height="92" viewBox="0 0 92 92" aria-hidden="true"><circle class="bg" cx="46" cy="46" r="40"/><circle class="fg" id="fg" cx="46" cy="46" r="40" stroke-dasharray="251.3" stroke-dashoffset="0"/></svg><div id="clock">2:00</div></div>
+  <div><strong id="cnt">0 drivers listed</strong><br><span style="color:var(--mut)">Press Enter to add each one.</span></div></div>
+  <form id="addf" class="row" novalidate>
+   <div style="flex:1 1 260px"><label for="inp" style="font-weight:700">Add a driver</label><input type="text" id="inp" autocomplete="off"></div>
+   <button type="submit" style="align-self:flex-end">Add</button>
+  </form>
+  <p id="e1" class="err" hidden></p>
+  <ul class="items" id="list" aria-label="Your drivers"></ul>
+  <div class="row"><button type="button" id="plus" class="sec">Add 1 minute</button><button type="button" id="fin">Finish and reveal the 16</button></div>
+ </div>
+ <div id="rev" hidden class="reveal">
+  <p id="tm" class="tally" style="margin-top:0"></p>
+  <div class="two"><div><h3>Your list</h3><ul class="items" id="mine" style="flex-direction:column;align-items:flex-start"></ul></div>
+  <form id="revf" novalidate><fieldset class="grid" id="g1" style="display:block;margin:0"><legend>Check each driver you identified. We pre-checked likely matches; fix any we got wrong.</legend><div class="grid" id="tiles"></div></fieldset>
+  <p class="tally" id="tally" role="status"></p>
+  <div class="row"><button type="submit" id="lock1">Confirm my count</button></div></form></div>
+ </div>
+ <div class="nav"><span></span><button type="button" id="n1" disabled>Next: choose three drivers</button></div>
+</section>
+
+<section id="s2" hidden aria-labelledby="h2a">
+ <h2 id="h2a" tabindex="-1">Activity 2: What can policymakers realistically control?</h2>
+ <p>Choose the <strong>three</strong> drivers you think policymakers could most realistically change. Think about which ones are decisions, and which ones are trends.</p>
+ <form id="f2" novalidate><fieldset class="grid" id="g2" aria-describedby="c2"><legend>Pick exactly three</legend></fieldset>
+ <p id="c2" class="tally" style="margin:0">0 of 3 chosen</p><p id="e2" class="err" tabindex="-1" hidden></p>
+ <div class="row"><button type="submit" id="lock2">Lock in my three</button></div></form>
+ <div id="fb2" hidden class="panel" tabindex="-1"><p style="margin:0">There are no wrong picks here. Some drivers respond to laws and payment rules. Others, like demographics and the economy, can be managed but not reversed.</p></div>
+ <div class="nav"><button type="button" class="sec" id="b2">Back</button><button type="button" id="n2" disabled>Next: share your view</button></div>
+</section>
+
+<section id="s3" hidden aria-labelledby="h3a">
+ <h2 id="h3a" tabindex="-1">Activity 3: Quick poll and reflection</h2>
+ <blockquote>A policymaker argues that higher spending proves the U.S. has the best health care system.</blockquote>
+ <form id="f3" novalidate>
+ <fieldset class="grid" id="g3" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr))" aria-describedby="e3a"><legend>Is this argument good, bad, or does it depend?</legend>
+  <label class="card"><input type="radio" name="p" value="Good"><span><strong>Good</strong></span></label>
+  <label class="card"><input type="radio" name="p" value="Bad"><span><strong>Bad</strong></span></label>
+  <label class="card"><input type="radio" name="p" value="It depends"><span><strong>It depends</strong></span></label>
+ </fieldset>
+ <p id="e3a" class="err" hidden></p>
+ <label for="why" style="font-weight:700">In 1 to 2 sentences, explain why.</label>
+ <textarea id="why" rows="5" aria-describedby="wc e3b"></textarea>
+ <p id="wc" style="color:var(--mut);margin:.25rem 0">0 sentences</p><p id="e3b" class="err" hidden></p>
+ <p style="color:var(--mut)">Responses are private to you. Other students' answers are not shown here.</p>
+ <div class="nav"><button type="button" class="sec" id="b3">Back</button><button type="submit" class="acc">Complete</button></div></form>
+</section>
+
+<section id="s4" hidden aria-labelledby="h4a">
+ <h2 id="h4a" tabindex="-1">Your results</h2>
+ <div class="row"><div class="score" id="big">0</div><div><strong id="sc2"></strong><br><span id="sent"></span></div></div>
+  <div class="panel"><h3>Activity 1 feedback</h3><p id="r1"></p></div>
+ <div class="panel"><h3>Activity 3 feedback</h3><p id="r3"></p><p>Ask yourself: What does "best" mean here (outcomes, access, cost, satisfaction)? Does extra spending reflect higher prices or more care? Who benefits from it?</p></div>
+ <div class="row"><button type="button" id="retry" class="sec">Try again</button></div>
+</section>
+</main>
+<div id="live" class="sr" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+"use strict";
+/* ARIA is used only where native HTML cannot do the job: aria-live regions (timer milestones, counts, results announced without moving focus),
+   aria-invalid + aria-describedby (tie error text to fields), aria-current="step" (mark the active step), aria-hidden (hide decorative ring/bar). */
+var D=["General inflation","Medical price inflation","Availability of health insurance / loss of individual accountability","Population growth","Aging of the population","Technology","Growth in national and personal income","Increase in administrative costs","Fraud and abuse","Defensive medicine","Malpractice","Growth in government health programs","Emphasis on curative vs preventive care","Fee-for-service payment systems","Market failure","Supply-sensitive care"];
+var K=[/\binflation\b|cost of living/i,/medical (price|cost|inflation)|health ?care (price|inflation)|(drug|hospital|prescription|care) (price|cost)s?|price inflation|high prices|pricing|prices of/i,/insurance|insured|third.?party|moral hazard|co-?pay|cost.?shar|deductible|accountab|out.of.pocket|coverage/i,/population growth|growing population|more people|population (increase|size)|increase in (the )?population|overpopulation|^population$/i,/ag(e)?ing|older|elderly|senior|baby boom|life expectancy|longevity|living longer/i,/technolog|innovation|new (treatment|drug|device|procedure)|equipment|devices|imaging|\bmri\b|advances|robot|biotech/i,/income|wealth|\bgdp\b|afflu|richer|economic growth|disposable/i,/admin|paperwork|bureaucra|billing|overhead|red tape|claims/i,/fraud|abuse|waste|scam|overbill|upcoding|false claims/i,/defensive|unnecessary (test|procedure)|extra tests|over.?testing/i,/malpractice|lawsuit|litigation|\bsu(e|ing)\b|liability|tort/i,/medicare|medicaid|government|public (program|insurance)|\bchip\b|entitlement|obamacare|\baca\b/i,/prevent|curative|wellness|primary care|chronic|lifestyle|obesity|screening|reactive/i,/fee.?for.?service|\bffs\b|payment (system|model|structure|method)|reimbursement|volume|paid per|pay(ing)? per/i,/market failure|asymmetr|monopol|consolidation|competition|transparen|market/i,/supply.?sensitive|supply of|more (doctors|specialists)|physician supply|supplier.induced|hospital beds/i];
+var PTS={full:8};
+var $=function(i){return document.getElementById(i)};
+var st,iv,total,left,C=251.3;
+function fresh(){return{s:1,ph:"ready",l:[],m:[],a1:0,p:[],a2:0,c:"",x:"",f:0,sc:0}}
+st=fresh();
+
+/* ---------- SCORM 1.2 ---------- */
+var S={api:null,on:false,t0:Date.now(),done:false};
+function find(w){var n=0;try{while(w&&!w.API&&w.parent&&w.parent!==w&&n++<500)w=w.parent}catch(e){}return w&&w.API||null}
+try{S.api=find(window)||(window.opener?find(window.opener):null)}catch(e){}
+function g(k){try{return S.on?String(S.api.LMSGetValue(k)):""}catch(e){return""}}
+function s(k,v){try{if(S.on)S.api.LMSSetValue(k,String(v))}catch(e){}}
+function commit(){try{if(S.on)S.api.LMSCommit("")}catch(e){}}
+try{if(S.api)S.on=String(S.api.LMSInitialize(""))==="true"}catch(e){}
+function ts(ms){var t=Math.floor(ms/1000),h=Math.floor(t/3600),m=Math.floor(t%3600/60),x=t%60,p=function(n){return(n<10?"0":"")+n};return("0000"+h).slice(-4)+":"+p(m)+":"+p(x)}
+function pack(){var o=JSON.parse(JSON.stringify(st));o.l=o.l.map(function(z){return z.slice(0,40)}).slice(0,40);o.x=o.x.slice(0,700);return JSON.stringify(o)}
+function save(complete){
+ var d=pack();
+ if(S.on){var cs=g("cmi.core.lesson_status");
+  if(!complete&&cs!=="passed"&&cs!=="completed"&&cs!=="failed")s("cmi.core.lesson_status","incomplete");
+  s("cmi.suspend_data",d);s("cmi.core.session_time",ts(Date.now()-S.t0));commit()}
+}
+function report(){
+ if(!S.on)return;
+ s("cmi.core.score.min",0);s("cmi.core.score.max",100);s("cmi.core.score.raw",st.sc);
+ s("cmi.core.lesson_status","completed");
+ s("cmi.core.exit","");s("cmi.suspend_data",pack());s("cmi.core.session_time",ts(Date.now()-S.t0));commit()
+}
+function finish(){if(S.done||!S.on)return;S.done=true;
+ if(!st.f)s("cmi.core.exit","suspend");s("cmi.core.session_time",ts(Date.now()-S.t0));commit();try{S.api.LMSFinish("")}catch(e){}}
+window.addEventListener("pagehide",function(){if(!st.f)save(false);finish()});
+window.addEventListener("beforeunload",function(){if(!st.f)save(false);finish()});
+if(S.on){try{var sd=g("cmi.suspend_data");if(sd){var o=JSON.parse(sd);if(o&&o.s)st=Object.assign(fresh(),o)}
+ var ls=g("cmi.core.lesson_status");if(ls==="not attempted"||ls==="")s("cmi.core.lesson_status","incomplete");commit()}catch(e){}}
+
+/* ---------- helpers ---------- */
+function say(t){$("live").textContent="";setTimeout(function(){$("live").textContent=t},50)}
+function err(id,t,focus){var e=$(id);e.textContent=t;e.hidden=false;if(focus)focus.setAttribute("aria-invalid","true")}
+function clr(id,f){$(id).hidden=true;if(f)f.removeAttribute("aria-invalid")}
+function mmss(n){return Math.floor(n/60)+":"+("0"+n%60).slice(-2)}
+function sentences(t){return t.replace(/\b(U\.S|e\.g|i\.e|etc|vs|Dr|Mr|Ms)\./gi,function(m){return m.replace(/\./g,"")}).split(/[.!?]+(?:\s+|$)/).filter(function(z){return z.trim().length>2}).length}
+function matches(items){var r=[];D.forEach(function(_,i){var hit=items.some(function(t){
+ if(i===0&&K[1].test(t))return false;if(i===3&&K[4].test(t))return false;return K[i].test(t)});if(hit)r.push(i)});return r}
+
+/* ---------- steps ---------- */
+var NAMES=["Recall","Prioritize","Reflect","Results"];
+function go(n,nofocus){st.s=n;
+ for(var i=1;i<=4;i++)$("s"+i).hidden=i!==n;
+ $("steps").innerHTML="";
+ NAMES.forEach(function(nm,i){var li=document.createElement("li");li.textContent=(i+1)+". "+nm+(i+1<n||(st.f&&i<3)?" (done)":"");
+  if(i+1===n)li.setAttribute("aria-current","step");else if(i+1<n||st.f)li.className="done";$("steps").appendChild(li)});
+ $("fill").style.width=(st.f?100:Math.round((n-1)/3*100))+"%";
+ if(!nofocus)$("s"+n).querySelector("h2").focus();
+ window.scrollTo({top:0,behavior:"smooth"});save(false)}
+
+/* ---------- Activity 1 ---------- */
+function drawList(){var ul=$("list");ul.innerHTML="";st.l.forEach(function(t,i){var li=document.createElement("li");var sp=document.createElement("span");sp.textContent=t;
+ var b=document.createElement("button");b.type="button";b.textContent="Remove";b.setAttribute("aria-label","Remove "+t);b.onclick=function(){st.l.splice(i,1);drawList();$("inp").focus()};li.append(sp,b);ul.appendChild(li)});
+ $("cnt").textContent=st.l.length+(st.l.length===1?" driver listed":" drivers listed")}
+function tick(){left--;$("clock").textContent=mmss(Math.max(left,0));$("fg").style.strokeDashoffset=C*(1-Math.max(left,0)/total);
+ $("fg").parentNode.parentNode.classList.toggle("low",left<=15);
+ if(left===60||left===30||left===10)say(left+" seconds left. "+st.l.length+" drivers listed.");
+ if(left<=0)reveal(true)}
+function start(){st.ph="running";total=left=120;$("ready").hidden=true;$("run").hidden=false;drawList();$("clock").textContent="2:00";
+ $("fg").style.strokeDashoffset=0;iv=setInterval(tick,1000);$("inp").focus();say("Clock started. Two minutes.")}
+function reveal(timeup){clearInterval(iv);st.ph="reveal";$("ready").hidden=true;$("run").hidden=true;$("rev").hidden=false;
+ var mine=$("mine");mine.innerHTML="";if(!st.l.length){var li=document.createElement("li");li.textContent="You did not list any drivers.";mine.appendChild(li)}
+ st.l.forEach(function(t){var li=document.createElement("li");li.textContent=t;mine.appendChild(li)});
+ var auto=st.m.length?st.m:matches(st.l);var t=$("tiles");t.innerHTML="";
+ D.forEach(function(name,i){var lb=document.createElement("label");lb.className="card";lb.style.setProperty("--i",i);
+  var cb=document.createElement("input");cb.type="checkbox";cb.checked=auto.indexOf(i)>-1;cb.value=i;cb.disabled=!!st.a1;
+  var sp=document.createElement("span");sp.textContent=name;var sub=document.createElement("span");sub.className="st";sp.appendChild(sub);lb.append(cb,sp);t.appendChild(lb);
+  cb.onchange=count;if(st.a1)lb.classList.add("locked")});
+ count(true);$("lock1").disabled=!!st.a1;
+ $("tm").textContent=(timeup===true?"Time's up. ":"")+"Here are the 16 drivers.";
+ if(!st.a1)$("h1a").focus();say((timeup===true?"Time's up. ":"")+"The 16 drivers are shown below.")}
+function count(quiet){var cs=[].slice.call($("tiles").querySelectorAll("input"));var n=0;
+ cs.forEach(function(c){var on=c.checked;if(on)n++;c.parentNode.querySelector(".st").textContent=on?"Identified":"Not on my list"});
+ st.m=cs.filter(function(c){return c.checked}).map(function(c){return+c.value});
+ $("tally").textContent="You identified "+n+" of 16 drivers.";if(quiet!==true)save(false)}
+function a1done(){st.a1=1;[].forEach.call($("tiles").querySelectorAll("input"),function(c){c.disabled=true;c.parentNode.classList.add("locked")});
+ $("lock1").disabled=true;$("n1").disabled=false;say("Count confirmed: "+st.m.length+" of 16. You can continue.");$("n1").focus();save(false)}
+
+/* ---------- Activity 2 ---------- */
+function build2(){var g2=$("g2");D.forEach(function(name,i){var lb=document.createElement("label");lb.className="card";
+ var cb=document.createElement("input");cb.type="checkbox";cb.value=i;cb.checked=st.p.indexOf(i)>-1;cb.disabled=!!st.a2;
+ var sp=document.createElement("span");sp.textContent=name;lb.append(cb,sp);g2.appendChild(lb);if(st.a2)lb.classList.add("locked");
+ cb.onchange=function(){var sel=sel2();if(sel.length>3){cb.checked=false;err("e2","You can choose only three. Uncheck one first.");say("You can choose only three.");return}
+  clr("e2");st.p=sel2();$("c2").textContent=st.p.length+" of 3 chosen";say($("c2").textContent)}});
+ $("c2").textContent=st.p.length+" of 3 chosen";if(st.a2)fb2()}
+function sel2(){return[].slice.call($("g2").querySelectorAll("input")).filter(function(c){return c.checked}).map(function(c){return+c.value})}
+function fb2(){$("fb2").hidden=false;$("lock2").disabled=true;$("n2").disabled=false;
+ [].forEach.call($("g2").querySelectorAll("input"),function(c){c.disabled=true})}
+
+/* ---------- Activity 3 & results ---------- */
+function upd3(){var n=sentences($("why").value);$("wc").textContent=n+(n===1?" sentence":" sentences")+(n>2?" (try to stay within 2)":"")}
+function submit3(e){e.preventDefault();var ch=document.querySelector("input[name=p]:checked"),w=$("why"),bad=null;clr("e3a");clr("e3b",w);
+ if(!ch){err("e3a","Choose Good, Bad, or It depends.");bad=document.querySelector("input[name=p]")}
+ var n=sentences(w.value);
+ if(n<1||w.value.trim().split(/\s+/).length<6){err("e3b","Write 1 to 2 full sentences (at least about 6 words) explaining why.",w);bad=bad||w}
+ if(bad){bad.focus();return}
+ st.c=ch.value;st.x=w.value.trim();
+ st.sc=calc();st.f=1;
+ report();results();go(4)}
+function calc(){return Math.round(Math.min(st.m.length,PTS.full)/PTS.full*100)}
+function results(){var n=st.m.length;
+ var big=$("big"),k=0,step=Math.max(1,Math.ceil(st.sc/25));var t=setInterval(function(){k=Math.min(st.sc,k+step);big.textContent=k;if(k>=st.sc)clearInterval(t)},30);
+ $("sc2").textContent="Activity 1 score out of 100. You identified "+n+" of 16 drivers (naming 8 or more earns full credit).";
+ $("sent").textContent=S.on?"Your score and completion were sent to the course.":"Preview mode: no LMS found, so no score was recorded.";
+ $("r1").textContent=n>=12?"Excellent recall. You named most of the drivers.":n>=8?"Strong recall. You covered at least half of the drivers.":n>=4?"A solid start. Look over the ones marked Not on my list, especially any you can connect to prices, demand, or payment.":"Many people start here. Review the full list and notice which drivers are about prices, how much care is used, or how care is paid for.";
+ $("r3").textContent="You chose \""+st.c+"\". There is no single right answer. What matters is the reasoning you gave: \""+st.x+"\"";
+ say("Complete. Your Activity 1 score is "+st.sc+" out of 100.")}
+function retry(){clearInterval(iv);st=fresh();$("list").innerHTML="";$("g2").querySelectorAll("label").forEach(function(l){l.remove()});build2();
+ $("fb2").hidden=true;$("lock2").disabled=false;$("n2").disabled=true;$("n1").disabled=true;$("why").value="";upd3();
+ [].forEach.call(document.querySelectorAll("input[name=p]"),function(r){r.checked=false});
+ $("ready").hidden=false;$("run").hidden=true;$("rev").hidden=true;$("lock1").disabled=false;S.done=false;go(1);say("Activities reset. Your last score stays on record until you complete again.")}
+
+/* ---------- wire up ---------- */
+$("start").onclick=start;
+$("addf").onsubmit=function(e){e.preventDefault();var v=$("inp").value.trim();clr("e1",$("inp"));
+ if(!v){err("e1","Type a driver before pressing Add.",$("inp"));$("inp").focus();return}
+ if(st.l.some(function(z){return z.toLowerCase()===v.toLowerCase()})){err("e1","You already listed that one.",$("inp"));$("inp").focus();return}
+ st.l.push(v);$("inp").value="";drawList();$("inp").focus()};
+$("plus").onclick=function(){left+=60;total+=60;say("Added one minute. "+mmss(left)+" left.")};
+$("fin").onclick=function(){reveal(false)};
+$("revf").onsubmit=function(e){e.preventDefault();a1done()};
+$("n1").onclick=function(){go(2)};$("b2").onclick=function(){go(1)};
+$("f2").onsubmit=function(e){e.preventDefault();var sel=sel2();if(sel.length!==3){err("e2","Choose exactly three drivers. You have "+sel.length+".");$("e2").focus();return}
+ clr("e2");st.p=sel;st.a2=1;fb2();$("fb2").focus();say("Locked in. You can continue.");save(false)};
+$("n2").onclick=function(){go(3)};$("b3").onclick=function(){go(2)};
+$("f3").onsubmit=submit3;$("why").oninput=upd3;
+$("retry").onclick=retry;
+$("save").onclick=function(){save(false);say(S.on?"Progress saved to your course.":"Preview mode: progress is not stored.")};
+build2();upd3();
+if(st.c){document.querySelectorAll("input[name=p]").forEach(function(r){r.checked=r.value===st.c});$("why").value=st.x;upd3()}
+if(st.f){results();$("n1").disabled=false;$("n2").disabled=false}
+else{if(st.a1||st.ph==="reveal"||st.l.length){reveal(false);if(st.a1)$("n1").disabled=false}
+ if(st.a2)$("n2").disabled=false}
+go(st.s,true);
+})();
+</script>
+<div id="frv-activity" data-id="m01b"></div>
+<script src="review.js"></script>
+</body>
+</html>
